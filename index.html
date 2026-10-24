@@ -104,10 +104,10 @@ button{font:inherit;cursor:pointer;color:var(--ink)}
 
 /* Inventaire */
 .inv{display:grid;grid-template-columns:1fr;gap:6px}
-.slot{display:grid;grid-template-columns:40px 1fr;align-items:center;gap:6px}
-.slot input[type=checkbox]{appearance:none;-webkit-appearance:none;width:30px;height:30px;margin:0 5px;border:2px solid var(--line);border-radius:4px;background:var(--field);padding:0;display:grid;place-items:center}
-.slot input[type=checkbox]:checked{background:var(--moss);border-color:var(--moss)}
-.slot input[type=checkbox]:checked::after{content:"";width:8px;height:14px;border:solid var(--moss-ink);border-width:0 3px 3px 0;transform:rotate(45deg) translate(-1px,-2px)}
+.slot{display:grid;grid-template-columns:1fr 44px;align-items:center;gap:6px}
+.trash{width:44px;height:42px;border:1.5px solid var(--soft);border-radius:6px;background:var(--field);color:var(--blood);display:grid;place-items:center;padding:0}
+.trash svg{width:20px;height:20px}
+.trash:disabled{color:var(--soft);cursor:default}
 .slot.used input[type=text]{border-color:var(--moss)}
 .count{float:right;font-family:"Alegreya Sans",sans-serif;font-size:.95rem;color:var(--muted);font-weight:700}
 .hint{margin:10px 0 0;font-size:.9rem;color:var(--muted)}
@@ -128,6 +128,25 @@ footer{margin-top:22px;display:flex;justify-content:space-between;align-items:ce
 .reset{border:1.5px solid var(--blood);color:var(--blood);background:transparent;border-radius:6px;padding:8px 14px;font-weight:700}
 .backup{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}
 .backup button{border:1.5px solid var(--line);background:var(--sheet);border-radius:6px;padding:10px 8px;font-weight:700}
+/* Dé */
+main{padding-bottom:110px}
+.fab{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));width:64px;height:64px;border-radius:16px;border:2px solid var(--line);background:var(--moss);color:var(--moss-ink);display:grid;place-items:center;box-shadow:0 4px 0 var(--line);z-index:20;padding:0}
+.fab:active{transform:translateY(3px);box-shadow:0 1px 0 var(--line)}
+.fab svg{width:34px;height:34px}
+.dice-veil{position:fixed;inset:0;background:color-mix(in srgb,var(--bg) 70%,transparent);display:none;place-items:center;z-index:30;padding:20px}
+.dice-veil.open{display:grid}
+.dice-card{background:var(--sheet);border:2px solid var(--line);border-radius:12px;padding:22px;text-align:center;width:min(300px,100%)}
+.die{width:140px;height:140px;margin:0 auto;border:3px solid var(--line);border-radius:22px;background:var(--field);display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);padding:16px}
+.die i{display:block;width:24px;height:24px;border-radius:50%;background:var(--ink);place-self:center;visibility:hidden}
+.die i.on{visibility:visible}
+.die.roll{animation:roll .45s ease-out}
+@keyframes roll{0%{transform:rotate(-200deg) scale(.6)}70%{transform:rotate(15deg) scale(1.05)}100%{transform:none}}
+.dice-num{font-family:"Uncial Antiqua",serif;font-size:2rem;margin:12px 0 2px}
+.dice-hist{min-height:1.4em;color:var(--muted);font-size:.95rem;font-variant-numeric:tabular-nums}
+.dice-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}
+.dice-actions button{border:2px solid var(--line);border-radius:6px;padding:10px;font-weight:800;background:var(--field)}
+.dice-actions .go{background:var(--moss);color:var(--moss-ink)}
+@media (prefers-reduced-motion:reduce){.die.roll{animation:none}}
 @media (min-width:480px){.inv{grid-template-columns:1fr 1fr;column-gap:14px}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
@@ -230,6 +249,17 @@ footer{margin-top:22px;display:flex;justify-content:space-between;align-items:ce
   </div>
 </main>
 
+<button class="fab" id="diceBtn" aria-label="Lancer un dé à 6 faces">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="8" cy="8" r="1.4" fill="currentColor"/><circle cx="12" cy="12" r="1.4" fill="currentColor"/><circle cx="16" cy="16" r="1.4" fill="currentColor"/></svg>
+</button>
+<div class="dice-veil" id="diceVeil">
+  <div class="dice-card" role="dialog" aria-modal="true" aria-label="Lancer de dé">
+    <div class="die" id="die"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <div class="dice-num" id="diceNum" aria-live="assertive"></div>
+    <div class="dice-hist" id="diceHist"></div>
+    <div class="dice-actions"><button id="diceClose">Fermer</button><button class="go" id="diceAgain">Relancer</button></div>
+  </div>
+</div>
 <script>
 (function(){
   const KEY = "nuada-fiche-v1";
@@ -267,9 +297,10 @@ footer{margin-top:22px;display:flex;justify-content:space-between;align-items:ce
   const I = $("inv");
   for(let i=0;i<14;i++){
     const row=document.createElement("div"); row.className="slot";
-    const c=document.createElement("input"); c.type="checkbox"; c.dataset.ii=i; c.setAttribute("aria-label","Emplacement "+(i+1)+" occupé");
     const t=document.createElement("input"); t.type="text"; t.dataset.it=i; t.autocomplete="off"; t.placeholder="Emplacement "+(i+1);
-    row.append(c,t); I.append(row);
+    const c=document.createElement("button"); c.className="trash"; c.dataset.ti=i; c.setAttribute("aria-label","Vider l’emplacement "+(i+1));
+    c.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 11v6M14 11v6"/></svg>';
+    row.append(t,c); I.append(row);
   }
 
   // --- rendu ---
@@ -291,9 +322,9 @@ footer{margin-top:22px;display:flex;justify-content:space-between;align-items:ce
     D.querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed",S.days[b.dataset.i]));
     let used=0;
     I.querySelectorAll(".slot").forEach((row,i)=>{
-      const c=row.children[0], t=row.children[1];
-      c.checked=S.inv[i].c; if(document.activeElement!==t) t.value=S.inv[i].t;
-      const u=S.inv[i].c||S.inv[i].t.trim()!==""; row.classList.toggle("used",u); if(u) used++;
+      const t=row.children[0], c=row.children[1];
+      if(document.activeElement!==t) t.value=S.inv[i].t;
+      const u=S.inv[i].t.trim()!==""; c.disabled=!u; row.classList.toggle("used",u); if(u) used++;
     });
     $("invCount").textContent=used+" / 14";
     const P=S.parcours;
@@ -324,10 +355,14 @@ footer{margin-top:22px;display:flex;justify-content:space-between;align-items:ce
     const d=+b.dataset.d; S.pv=Math.max(0,S.pv+d); if(S.pvMax>0) S.pv=Math.min(S.pvMax,S.pv);
   }));
   $("pvFull").onclick=()=>change(()=>S.pv=S.pvMax);
-  $("pvMax").addEventListener("input",e=>change(()=>{
-    const wasFull = S.pv===S.pvMax; S.pvMax=Math.max(0,num(e.target.value));
-    if(wasFull||S.pv>S.pvMax) S.pv=S.pvMax;
-  }));
+  $("pvMax").addEventListener("change",e=>{
+    const v=Math.max(0,num(e.target.value));
+    if(v===S.pvMax){ render(); return; }
+    if(!confirm("Changer les points de vie maximum de "+S.pvMax+" à "+v+" ?")){ e.target.value=S.pvMax||""; e.target.blur(); render(); return; }
+    change(()=>{ const wasFull=S.pv===S.pvMax; S.pvMax=v; if(wasFull||S.pv>S.pvMax) S.pv=S.pvMax; });
+    e.target.blur();
+  });
+  $("pvMax").addEventListener("keydown",e=>{ if(e.key==="Enter") e.target.blur(); });
   document.querySelectorAll(".stat").forEach(el=>{
     const k=el.dataset.k;
     el.querySelector("input").addEventListener("input",e=>{S[k]=num(e.target.value); save();});
@@ -337,10 +372,23 @@ footer{margin-top:22px;display:flex;justify-content:space-between;align-items:ce
   $("dmg").addEventListener("input",e=>{S.dmg=e.target.value; save();});
   $("wake").addEventListener("input",e=>{S.wake=e.target.value; save();});
   W.addEventListener("input",e=>{const t=e.target; S.weapons[t.dataset.wi][t.dataset.f]=t.value; save();});
-  $("mode").addEventListener("click",e=>{const b=e.target.closest("button"); if(b) change(()=>S.mode=S.mode===b.dataset.v?"":b.dataset.v);});
+  $("mode").addEventListener("click",e=>{
+    const b=e.target.closest("button"); if(!b) return;
+    const next=S.mode===b.dataset.v?"":b.dataset.v;
+    const msg=next?"Passer en mode de jeu « "+next+" » ?":"Retirer le mode de jeu « "+S.mode+" » ?";
+    if(confirm(msg)) change(()=>S.mode=next);
+  });
   R.addEventListener("click",e=>{const b=e.target.closest("button"); if(b) change(()=>S.rep=+b.dataset.v);});
-  D.addEventListener("click",e=>{const b=e.target.closest("button"); if(b) change(()=>S.days[b.dataset.i]=!S.days[b.dataset.i]);});
-  I.addEventListener("change",e=>{const t=e.target; if(t.dataset.ii!==undefined) change(()=>S.inv[t.dataset.ii].c=t.checked);});
+  D.addEventListener("click",e=>{
+    const b=e.target.closest("button"); if(!b) return; const i=+b.dataset.i;
+    const msg=S.days[i]?"Décocher le jour "+(i+1)+" ?":"Cocher le jour "+(i+1)+" comme écoulé ?";
+    if(confirm(msg)) change(()=>S.days[i]=!S.days[i]);
+  });
+  I.addEventListener("click",e=>{
+    const b=e.target.closest(".trash"); if(!b) return; const i=+b.dataset.ti;
+    const txt=S.inv[i].t.trim(); if(!txt) return;
+    if(confirm("Jeter « "+txt+" » de l’emplacement "+(i+1)+" ?")) change(()=>{ S.inv[i].t=""; S.inv[i].c=false; });
+  });
   I.addEventListener("input",e=>{const t=e.target; if(t.dataset.it!==undefined){ S.inv[t.dataset.it].t=t.value; render(); save(); }});
   function addPar(){ const n=parseInt($("parIn").value,10); if(!(n>0)) { $("parIn").focus(); return; } change(()=>S.parcours.push(n)); $("parIn").value=""; $("parIn").focus(); }
   $("parAdd").onclick=addPar;
@@ -353,6 +401,26 @@ footer{margin-top:22px;display:flex;justify-content:space-between;align-items:ce
     const n=parseInt(v,10);
     change(()=>{ if(n>0) S.parcours[i]=n; else S.parcours.splice(i,1); });
   });
+  // --- dé à 6 faces ---
+  const PIPS={1:[4],2:[0,8],3:[0,4,8],4:[0,2,6,8],5:[0,2,4,6,8],6:[0,2,3,5,6,8]};
+  const hist=[];
+  function d6(){ const a=new Uint32Array(1); let x; do{ crypto.getRandomValues(a); x=a[0]; }while(x>=4294967292); return x%6+1; }
+  function roll(){
+    const n=d6(), die=$("die");
+    die.querySelectorAll("i").forEach((p,i)=>p.classList.toggle("on",PIPS[n].includes(i)));
+    die.classList.remove("roll"); void die.offsetWidth; die.classList.add("roll");
+    $("diceNum").textContent=n;
+    hist.unshift(n); if(hist.length>6) hist.pop();
+    $("diceHist").textContent=hist.length>1?"Précédents : "+hist.slice(1).join(", "):"";
+    if(navigator.vibrate) navigator.vibrate(30);
+  }
+  $("diceBtn").onclick=()=>{ $("diceVeil").classList.add("open"); roll(); $("diceAgain").focus(); };
+  $("diceAgain").onclick=roll;
+  const closeDice=()=>{ $("diceVeil").classList.remove("open"); $("diceBtn").focus(); };
+  $("diceClose").onclick=closeDice;
+  $("diceVeil").addEventListener("click",e=>{ if(e.target.id==="diceVeil") closeDice(); });
+  document.addEventListener("keydown",e=>{ if(e.key==="Escape"&&$("diceVeil").classList.contains("open")) closeDice(); });
+
   $("reset").onclick=()=>{ if(confirm("Effacer toute la fiche et commencer une nouvelle partie ?")) change(()=>{ S=blank(); }); };
 
   // --- chargement ---
