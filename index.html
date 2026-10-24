@@ -128,6 +128,85 @@ footer{margin-top:22px;display:flex;justify-content:space-between;align-items:ce
 .reset{border:1.5px solid var(--blood);color:var(--blood);background:transparent;border-radius:6px;padding:8px 14px;font-weight:700}
 .backup{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}
 .backup button{border:1.5px solid var(--line);background:var(--sheet);border-radius:6px;padding:10px 8px;font-weight:700}
+/* Combat */
+.cb-form{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.cb-form .full{grid-column:1/-1}
+.cb-form label{display:block;font-size:.9rem;color:var(--muted);margin-bottom:2px}
+.btn-main{width:100%;border:2px solid var(--line);background:var(--moss);color:var(--moss-ink);border-radius:8px;padding:14px;font-weight:800;font-size:1.1rem;margin-top:12px}
+.btn-main:disabled{opacity:.5}
+.vs{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.fighter{border:1.5px solid var(--soft);border-radius:8px;background:var(--field);padding:10px}
+.fighter.foe{border-color:var(--blood)}
+.fighter .who{font-weight:800;line-height:1.2;min-height:1.2em;overflow-wrap:anywhere}
+.fighter .hp{font-family:"Uncial Antiqua",serif;font-size:2rem;line-height:1.1;margin:6px 0 2px;font-variant-numeric:tabular-nums}
+.fighter .hp small{font-family:"Alegreya Sans",sans-serif;font-size:1rem;color:var(--muted);font-weight:700}
+.fighter .bar{margin-top:4px;height:9px}
+.fighter .info{font-size:.88rem;color:var(--muted);margin-top:6px;line-height:1.3}
+.fighter .adj{display:flex;gap:6px;margin-top:8px}
+.fighter .adj button{flex:1;border:1.5px solid var(--soft);border-radius:6px;background:var(--sheet);font-weight:800;padding:4px 0}
+.turn{margin-top:12px;border-left:4px solid var(--gold);padding:6px 0 6px 10px}
+.turn p{margin:4px 0}
+.turn .dice{font-size:1.6rem;line-height:1;vertical-align:-3px;letter-spacing:2px}
+.ok{color:var(--moss);font-weight:800}
+.ko{color:var(--blood);font-weight:800}
+.result{margin-top:12px;border:2px solid var(--line);border-radius:8px;padding:12px;text-align:center}
+.result strong{display:block;font-family:"Uncial Antiqua",serif;font-weight:400;font-size:1.6rem}
+.result.win{background:color-mix(in srgb,var(--moss) 18%,var(--field))}
+.result.lose{background:color-mix(in srgb,var(--blood) 15%,var(--field))}
+.cb-log{margin-top:10px}
+.cb-log summary{cursor:pointer;font-weight:700;color:var(--muted)}
+.cb-log ol{margin:6px 0 0;padding-left:1.4em;font-size:.92rem}
+.cb-log li{margin:4px 0}
+.cb-foot{display:flex;justify-content:flex-end;margin-top:8px}
+
+.known{margin-bottom:12px}
+.known button{width:100%;text-align:left;border:2px solid var(--blood);background:var(--field);border-radius:8px;padding:10px 12px;margin-top:6px}
+.known button b{display:block;font-size:1.05rem}
+.known button span{font-size:.9rem;color:var(--muted)}
+.mods{margin-top:10px}
+.mod{display:grid;grid-template-columns:36px 1fr;gap:8px;align-items:center;border:1.5px solid var(--soft);border-radius:8px;background:var(--field);padding:8px;margin-top:6px;width:100%;text-align:left}
+.mod .box{width:28px;height:28px;border:2px solid var(--line);border-radius:4px;display:grid;place-items:center}
+.mod[aria-pressed="true"]{border-color:var(--moss)}
+.mod[aria-pressed="true"] .box{background:var(--moss);border-color:var(--moss)}
+.mod[aria-pressed="true"] .box::after{content:"";width:7px;height:13px;border:solid var(--moss-ink);border-width:0 3px 3px 0;transform:rotate(45deg) translate(-1px,-2px)}
+
+/* Cases cochées */
+.now{flex-wrap:wrap}
+.tickbtn{margin-left:auto;align-self:center;border:2px solid var(--line);background:var(--field);border-radius:8px;padding:8px 12px;font-weight:800;display:flex;align-items:center;gap:8px}
+.tickbtn .box{width:22px;height:22px;border:2px solid var(--line);border-radius:3px;display:grid;place-items:center}
+.tickbtn[aria-pressed="true"]{border-color:var(--gold);background:color-mix(in srgb,var(--gold) 18%,var(--field))}
+.tickbtn[aria-pressed="true"] .box{background:var(--gold);border-color:var(--gold)}
+.tickbtn[aria-pressed="true"] .box::after{content:"";width:6px;height:11px;border:solid #1A1408;border-width:0 3px 3px 0;transform:rotate(45deg) translate(-1px,-1px)}
+.tickbtn[hidden]{display:none}
+.notice{margin:10px 0 0;padding:8px 10px;border-left:4px solid var(--gold);background:var(--field);font-weight:700}
+.trail button.ck{box-shadow:inset 0 -3px 0 var(--gold)}
+.ticks{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.ticks{display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr))}
+.ticks button{border:2px dashed var(--soft);background:var(--field);border-radius:6px;padding:8px 4px;font-weight:800;font-variant-numeric:tabular-nums;display:flex;align-items:center;justify-content:center;gap:6px}
+.ticks button .box{width:16px;height:16px;border:2px solid var(--line);border-radius:3px;display:grid;place-items:center}
+.ticks button[aria-pressed="true"]{border:2px solid var(--gold);background:color-mix(in srgb,var(--gold) 18%,var(--field))}
+.ticks button[aria-pressed="true"] .box{background:var(--gold);border-color:var(--gold)}
+.ticks button[aria-pressed="true"] .box::after{content:"";width:4px;height:8px;border:solid #1A1408;border-width:0 2px 2px 0;transform:rotate(45deg) translate(-1px,-1px)}
+.ticks .empty{color:var(--muted);font-size:.95rem}
+
+/* Pages spéciales */
+.sp{border:1.5px solid var(--soft);border-radius:8px;background:var(--field);margin-top:8px}
+.sp[open]{border-color:var(--gold)}
+.sp summary{padding:10px 12px;font-weight:800;cursor:pointer;list-style-position:inside}
+.sp summary .small{font-weight:500}
+.sp.here{border:2px solid var(--gold)}
+.sp.here summary::after{content:"Vous y êtes";float:right;background:var(--gold);color:#1A1408;border-radius:10px;padding:0 8px;font-size:.85rem}
+.sp-body{padding:0 12px 12px}
+.sp-con{margin:0 0 8px;font-size:.95rem;color:var(--muted)}
+.q{display:grid;grid-template-columns:36px 1fr auto;gap:8px;align-items:center;padding:8px 0;border-top:1px solid var(--soft)}
+.q .box{width:30px;height:30px;border:2px solid var(--line);border-radius:4px;background:var(--sheet);padding:0;display:grid;place-items:center}
+.q .box[aria-pressed="true"]{background:var(--moss);border-color:var(--moss)}
+.q .box[aria-pressed="true"]::after{content:"";width:8px;height:14px;border:solid var(--moss-ink);border-width:0 3px 3px 0;transform:rotate(45deg) translate(-1px,-2px)}
+.q .t{font-weight:700;line-height:1.25}
+.q .t small{display:block;font-weight:400;color:var(--muted)}
+.q.done .t{text-decoration:line-through;text-decoration-thickness:2px;color:var(--muted)}
+.q .go{border:1.5px solid var(--line);border-radius:6px;background:var(--sheet);font-weight:800;padding:6px 10px;white-space:nowrap}
+
 /* Dé */
 main{padding-bottom:110px}
 .fab{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));width:64px;height:64px;border-radius:16px;border:2px solid var(--line);background:var(--moss);color:var(--moss-ink);display:grid;place-items:center;box-shadow:0 4px 0 var(--line);z-index:20;padding:0}
@@ -161,14 +240,65 @@ main{padding-bottom:110px}
 
   <section aria-labelledby="h-par">
     <h2 id="h-par">Parcours</h2>
-    <div class="now"><span class="small">Paragraphe actuel</span><span class="big" id="parNow">–</span></div>
+    <div class="now"><span class="small">Paragraphe actuel</span><span class="big" id="parNow">–</span>
+      <button class="tickbtn" id="parTick" hidden><span class="box"></span><span id="parTickTxt">Cocher la case</span></button></div>
     <div class="addrow">
       <input id="parIn" type="number" inputmode="numeric" min="1" placeholder="Numéro du paragraphe" aria-label="Numéro du paragraphe">
       <button id="parAdd">Ajouter</button>
     </div>
     <div class="trail" id="trail" aria-label="Paragraphes déjà lus, dans l’ordre"></div>
     <div class="trailbar"><span class="small" id="parCount"></span><button class="link" id="parUndo">Retirer le dernier</button></div>
-    <p class="hint">Touchez un numéro pour le corriger ou le supprimer.</p>
+    <p class="notice" id="parNotice" hidden></p>
+    <p class="hint">Touchez un numéro pour le corriger ou le supprimer. Les numéros soulignés en or ont leur case cochée.</p>
+  </section>
+
+  <section aria-labelledby="h-ck">
+    <h2 id="h-ck">Cases cochées <span class="count" id="ckCount"></span></h2>
+    <div class="ticks" id="ticks"></div>
+    <p class="hint">Paragraphes du livre qui ont une case. Touchez un numéro pour cocher ou décocher sa case.</p>
+  </section>
+
+  <section aria-labelledby="h-cb" id="combatSec">
+    <h2 id="h-cb">Combat</h2>
+    <div id="cbSetup">
+      <div class="known" id="cbKnown" hidden></div>
+      <div class="cb-form">
+        <div class="full"><label for="cbName">Nom de l’ennemi</label><input id="cbName" autocomplete="off" placeholder="Ex. Brigand"></div>
+        <div><label for="cbDex">Dextérité</label><input id="cbDex" type="number" inputmode="numeric" min="1"></div>
+        <div><label for="cbPv">Points de vie</label><input id="cbPv" type="number" inputmode="numeric" min="1"></div>
+        <div class="full"><label for="cbBonus">Bonus de dommages de l’ennemi (seulement si le livre en indique)</label><input id="cbBonus" type="number" inputmode="numeric" placeholder="0"></div>
+      </div>
+      <button class="btn-main" id="cbStart">Commencer le combat</button>
+      <p class="hint">Plusieurs ennemis en même temps comptent comme un seul adversaire : entrez les valeurs du groupe données par le livre.</p>
+    </div>
+    <div id="cbFight" hidden>
+      <div class="vs">
+        <div class="fighter">
+          <div class="who" id="cbMe">Vous</div>
+          <div class="hp"><span id="cbMyPv"></span> <small>/ <span id="cbMyMax"></span></small></div>
+          <div class="bar" id="cbMyBar"><span></span></div>
+          <div class="info" id="cbMyInfo"></div>
+        </div>
+        <div class="fighter foe">
+          <div class="who" id="cbFoeName"></div>
+          <div class="hp"><span id="cbFoePv"></span> <small>/ <span id="cbFoeMax"></span></small></div>
+          <div class="bar low" id="cbFoeBar"><span></span></div>
+          <div class="info" id="cbFoeInfo"></div>
+          <div class="adj"><button id="cbFoeMinus" aria-label="Retirer 1 point de vie à l’ennemi">−1</button><button id="cbFoePlus" aria-label="Rendre 1 point de vie à l’ennemi">+1</button></div>
+        </div>
+      </div>
+      <div class="mods" id="cbMods"></div>
+      <div class="turn" id="cbLast" hidden></div>
+      <div class="result" id="cbResult" hidden></div>
+      <button class="btn-main" id="cbTurn">Jouer le tour 1</button>
+      <details class="cb-log" id="cbLog" hidden><summary>Tours précédents</summary><ol reversed id="cbLogList"></ol></details>
+      <div class="cb-foot"><button class="link" id="cbEnd">Abandonner le combat</button></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="h-sp">
+    <h2 id="h-sp">Pages spéciales</h2>
+    <div id="special"></div>
   </section>
 
   <section aria-labelledby="h-pv">
@@ -209,7 +339,7 @@ main{padding-bottom:110px}
 
   <section aria-labelledby="h-dmg">
     <h2 id="h-dmg">Dommages actuels</h2>
-    <input id="dmg" aria-labelledby="h-dmg" placeholder="Ex. 1d6 + 2" autocomplete="off">
+    <input id="dmg" aria-labelledby="h-dmg" placeholder="Ex. +1" autocomplete="off">
   </section>
 
   <section aria-labelledby="h-mode">
@@ -267,7 +397,7 @@ main{padding-bottom:110px}
     name:"", pvMax:0, pv:0, dex:0, con:0, chance:0, dmg:"", talents:"",
     weapons:Array.from({length:5},()=>({n:"",b:""})),
     mode:"", rep:0, days:[false,false,false,false], wake:"",
-    inv:Array.from({length:14},()=>({c:false,t:""})), parcours:[], updated:0
+    inv:Array.from({length:14},()=>({c:false,t:""})), parcours:[], coches:[], special:{}, combat:null, updated:0
   });
   let S = blank();
   let timer = null;
@@ -279,6 +409,9 @@ main{padding-bottom:110px}
     r.weapons = b.weapons.map((w,i)=>Object.assign({n:"",b:""},(o&&o.weapons&&o.weapons[i])||{}));
     r.inv = b.inv.map((w,i)=>Object.assign({c:false,t:""},(o&&o.inv&&o.inv[i])||{}));
     r.days = [0,1,2,3].map(i=>!!(o&&o.days&&o.days[i]));
+    r.coches = [...new Set((o&&Array.isArray(o.coches)?o.coches:[]).map(n=>parseInt(n,10)).filter(n=>n>0))].sort((a,b)=>a-b);
+    r.combat = (o&&o.combat&&typeof o.combat==="object")?JSON.parse(JSON.stringify(o.combat)):null;
+    r.special = (o&&o.special&&typeof o.special==="object")?JSON.parse(JSON.stringify(o.special)):{};
     r.parcours = (o&&Array.isArray(o.parcours)?o.parcours:[]).map(n=>parseInt(n,10)).filter(n=>n>0);
     return r;
   }
@@ -302,6 +435,55 @@ main{padding-bottom:110px}
     c.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 11v6M14 11v6"/></svg>';
     row.append(t,c); I.append(row);
   }
+
+  // --- pages spéciales du livre ---
+  const PAGES = {
+    319: { titre:"Tableau des quêtes", items:[
+      {t:"Une balade en forêt", c:"environ 4 points de Constitution", to:4},
+      {t:"Engagez-vous !", c:"6 points de Constitution obligatoires", to:318},
+      {t:"Une oreille attentive", c:"environ 3 points de Constitution", to:252},
+      {t:"Un binôme pour la Grotte des voleurs", c:"environ 5 points de Constitution", to:198},
+      {t:"Arf !", c:"environ 4 points de Constitution", to:25},
+      {t:"La solidarité de la cité", c:"environ 4 points de Constitution", to:105}
+    ]}
+  };
+  const SP = $("special");
+  Object.keys(PAGES).forEach(k=>{
+    const pg=PAGES[k], d=document.createElement("details"); d.className="sp"; d.dataset.k=k;
+    d.innerHTML='<summary>Paragraphe '+k+' : '+pg.titre+' <span class="small" data-cnt></span></summary><div class="sp-body"><p class="sp-con" data-con></p></div>';
+    const body=d.querySelector(".sp-body");
+    pg.items.forEach((it,i)=>{
+      const row=document.createElement("div"); row.className="q"; row.dataset.k=k; row.dataset.i=i;
+      row.innerHTML='<button class="box" data-act="tick" aria-label="Quête faite : '+it.t+'"></button><div class="t">'+it.t+'<small>'+it.c+'</small></div><button class="go" data-act="go">Aller au '+it.to+'</button>';
+      body.append(row);
+    });
+    SP.append(d);
+  });
+  let lastHere=null;
+  function renderSpecial(){
+    const cur=S.parcours.length?String(S.parcours[S.parcours.length-1]):null;
+    SP.querySelectorAll(".sp").forEach(d=>{
+      const k=d.dataset.k, st=S.special[k]||[], n=PAGES[k].items.length;
+      d.querySelectorAll(".q").forEach(r=>{ const on=!!st[r.dataset.i]; r.classList.toggle("done",on); r.querySelector(".box").setAttribute("aria-pressed",on); });
+      d.querySelector("[data-cnt]").textContent="("+st.filter(Boolean).length+" / "+n+" faites)";
+      d.querySelector("[data-con]").textContent="Votre Constitution actuelle : "+S.con;
+      const here=cur===k; d.classList.toggle("here",here);
+      if(here&&lastHere!==cur) d.open=true;
+    });
+    lastHere=cur;
+  }
+  SP.addEventListener("click",e=>{
+    const b=e.target.closest("button[data-act]"); if(!b) return;
+    const r=b.closest(".q"), k=r.dataset.k, i=+r.dataset.i, it=PAGES[k].items[i];
+    if(b.dataset.act==="tick"){
+      const on=!!(S.special[k]&&S.special[k][i]);
+      if(confirm(on?"Décocher « "+it.t+" » ?":"Cocher « "+it.t+" » comme faite ?"))
+        change(()=>{ if(!S.special[k]) S.special[k]=[]; S.special[k][i]=!on; });
+    } else if(confirm("Ajouter le paragraphe "+it.to+" à votre parcours ?")){
+      change(()=>S.parcours.push(it.to));
+      $("h-par").scrollIntoView({behavior:"smooth"});
+    }
+  });
 
   // --- rendu ---
   function render(){
@@ -330,10 +512,13 @@ main{padding-bottom:110px}
     const P=S.parcours;
     $("parNow").textContent=P.length?P[P.length-1]:"–";
     const T=$("trail"); T.textContent="";
-    P.forEach((n,i)=>{const b=document.createElement("button"); b.dataset.pi=i; b.textContent=n; b.setAttribute("aria-label","Étape "+(i+1)+" : paragraphe "+n); T.append(b);});
+    P.forEach((n,i)=>{const b=document.createElement("button"); b.dataset.pi=i; b.textContent=n; if(S.coches.includes(n)) b.classList.add("ck"); b.setAttribute("aria-label","Étape "+(i+1)+" : paragraphe "+n); T.append(b);});
     T.scrollTop=T.scrollHeight;
     $("parCount").textContent=P.length?P.length+(P.length>1?" paragraphes lus":" paragraphe lu"):"Aucun paragraphe noté";
     $("parUndo").style.visibility=P.length?"visible":"hidden";
+    renderSpecial();
+    renderCombat();
+    renderTicks();
   }
 
   // --- sauvegarde ---
@@ -390,10 +575,38 @@ main{padding-bottom:110px}
     if(confirm("Jeter « "+txt+" » de l’emplacement "+(i+1)+" ?")) change(()=>{ S.inv[i].t=""; S.inv[i].c=false; });
   });
   I.addEventListener("input",e=>{const t=e.target; if(t.dataset.it!==undefined){ S.inv[t.dataset.it].t=t.value; render(); save(); }});
-  function addPar(){ const n=parseInt($("parIn").value,10); if(!(n>0)) { $("parIn").focus(); return; } change(()=>S.parcours.push(n)); $("parIn").value=""; $("parIn").focus(); }
+  // --- cases cochées ---
+  const COCHABLES=[3,6,8,28,34,60,78,89,96,102,108,115,124,147,160,163,180,193,201,227,234,241,248,256,273,285,286,289,295,298,303];
+  const curPar=()=>S.parcours.length?S.parcours[S.parcours.length-1]:null;
+  function renderTicks(){
+    const cur=curPar(), on=cur!==null&&S.coches.includes(cur);
+    $("parTick").hidden=cur===null||!(COCHABLES.includes(cur)||on); $("parTick").setAttribute("aria-pressed",on);
+    $("parTickTxt").textContent=on?"Case cochée":"Cocher la case";
+    const T=$("ticks"); T.innerHTML="";
+    const all=[...new Set([...COCHABLES,...S.coches])].sort((a,b)=>a-b);
+    all.forEach(n=>{ const on=S.coches.includes(n), b=document.createElement("button"); b.dataset.n=n; b.setAttribute("aria-pressed",on);
+      b.innerHTML='<span class="box"></span>'+n; b.setAttribute("aria-label",(on?"Décocher":"Cocher")+" le paragraphe "+n); T.append(b); });
+    $("ckCount").textContent=S.coches.length+" / "+all.length;
+  }
+  function setTick(n,on){ change(()=>{ const set=new Set(S.coches); on?set.add(n):set.delete(n); S.coches=[...set].sort((a,b)=>a-b); }); }
+  $("parTick").onclick=()=>{
+    const n=curPar(); if(n===null) return; const on=S.coches.includes(n);
+    if(confirm(on?"Décocher la case du paragraphe "+n+" ?":"Cocher la case du paragraphe "+n+" ?")) setTick(n,!on);
+  };
+  $("ticks").addEventListener("click",e=>{
+    const b=e.target.closest("button[data-n]"); if(!b) return; const n=+b.dataset.n, on=S.coches.includes(n);
+    if(confirm((on?"Décocher":"Cocher")+" la case du paragraphe "+n+" ?")) setTick(n,!on);
+  });
+  function showNotice(n){
+    const el=$("parNotice");
+    if(S.coches.includes(n)){ el.hidden=false; el.textContent="Attention : la case du paragraphe "+n+" est déjà cochée."; }
+    else el.hidden=true;
+  }
+
+  function addPar(){ const n=parseInt($("parIn").value,10); if(!(n>0)) { $("parIn").focus(); return; } change(()=>S.parcours.push(n)); showNotice(n); $("parIn").value=""; $("parIn").focus(); }
   $("parAdd").onclick=addPar;
   $("parIn").addEventListener("keydown",e=>{ if(e.key==="Enter") addPar(); });
-  $("parUndo").onclick=()=>{ if(S.parcours.length) change(()=>S.parcours.pop()); };
+  $("parUndo").onclick=()=>{ if(S.parcours.length) change(()=>S.parcours.pop()); $("parNotice").hidden=true; };
   $("trail").addEventListener("click",e=>{
     const b=e.target.closest("button"); if(!b) return; const i=+b.dataset.pi;
     const v=prompt("Étape "+(i+1)+" : corrigez le numéro, ou videz le champ pour la supprimer.", S.parcours[i]);
@@ -420,6 +633,170 @@ main{padding-bottom:110px}
   $("diceClose").onclick=closeDice;
   $("diceVeil").addEventListener("click",e=>{ if(e.target.id==="diceVeil") closeDice(); });
   document.addEventListener("keydown",e=>{ if(e.key==="Escape"&&$("diceVeil").classList.contains("open")) closeDice(); });
+
+  // --- ennemis du livre, par paragraphe ---
+  const TUEUR_GOBELINS={label:"Talent Tueur de gobelins : +1 de dommages à chaque touche", my:1, talent:"tueur de gobelins"};
+  const GOBELIN_FORET={ nom:"Gobelin de la forêt", dex:5, pv:15, bonus:0, mods:[TUEUR_GOBELINS] };
+  const GARDES_DES={ nom:"Deux gardes jouant aux dés", dex:9, pv:25, bonus:0 };
+  const BANDIT_CAMP={ nom:"Bandit du camp", dex:7, pv:20, bonus:0 };
+  const GOBELINS_CAMP={ nom:"Gobelins du camp", dex:7, pv:20, bonus:0, mods:[TUEUR_GOBELINS] };
+  const ENNEMIS = {
+    3:   [GOBELIN_FORET],
+    115: [GOBELIN_FORET],
+    129: [GOBELINS_CAMP],
+    156: [{...GOBELINS_CAMP, narratif:0, win:{con:-1, to:243}, lose:{to:70}}],
+    165: [{...BANDIT_CAMP, narratif:0, win:{con:-2, to:112}, lose:{to:70}}],
+    189: [{ nom:"Garde de la bibliothèque", dex:7, pv:20, bonus:0, narratif:0, win:{to:141}, lose:{to:51} }],
+    192: [{...GARDES_DES, narratif:3, narratifKo:{to:68}}],
+    208: [{...BANDIT_CAMP, narratif:0, win:{con:-2, to:95}, lose:{to:70}}],
+    243: [{...BANDIT_CAMP, narratif:0, win:{con:-2, to:95}, lose:{to:70}}],
+    274: [{ nom:"Gobelin et bandit du camp", dex:8, pv:30, bonus:0, mods:[
+      {label:"Aide du garde : +2 sur vos attaques et vos dégâts", my:2, hit:2, auto:true},
+      TUEUR_GOBELINS ], narratif:0, win:{con:-2, deficitPv:3, to:142} }],
+    322: [{...GARDES_DES, narratif:3}]
+  };
+  const plain=t=>String(t||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+  function startCombat(nom,dex,pv,bonus,mods,issues){
+    const debut=S.parcours.length?S.parcours[S.parcours.length-1]:null;
+    change(()=>{ S.combat={nom,dex,pv,pvMax:pv,bonus,tour:1,log:[],fini:null,debut,
+      win:(issues&&issues.win)||null, lose:(issues&&issues.lose)||null,
+      mods:(mods||[]).map(m=>({label:m.label,my:m.my||0,hit:m.hit||0,on:!!(m.auto||(m.talent&&plain(S.talents).includes(m.talent)))}))}; });
+    $("h-cb").scrollIntoView({behavior:"smooth"});
+  }
+  const modBonus=c=>(c.mods||[]).reduce((a,m)=>a+(m.on?m.my:0),0);
+  const modHit=c=>(c.mods||[]).reduce((a,m)=>a+(m.on?(m.hit||0):0),0);
+
+  // --- combat ---
+  const FACES=["","⚀","⚁","⚂","⚃","⚄","⚅"];
+  const myBonus=()=>{ const m=String(S.dmg||"").replace(/\s+/g,"").match(/[+-]?\d+/); return m?parseInt(m[0],10):0; };
+  const sgn=n=>n>0?"+ "+n:"− "+Math.abs(n);
+  const esc=t=>String(t).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+  function turnHTML(e,c){
+    let h='<p><b>Votre attaque</b> <span class="dice">'+FACES[e.a[0]]+FACES[e.a[1]]+'</span> '+(e.a[0]+e.a[1]);
+    if(e.hit){ h+=' ≤ '+e.dexA+' : <span class="ok">touché !</span> 1 + '+e.d+' (dé)'+(e.b?' '+sgn(e.b)+' (bonus)':'')+' = <b>'+e.tot+' dégâts</b></p>'; }
+    else h+=' &gt; '+e.dexA+' : <span class="ko">raté</span></p>';
+    if(!e.r){ h+='<p>'+esc(c.nom)+' est vaincu avant de riposter.</p>'; return h; }
+    h+='<p><b>Riposte</b> <span class="dice">'+FACES[e.r[0]]+FACES[e.r[1]]+'</span> '+(e.r[0]+e.r[1]);
+    if(e.rhit) h+=' ≤ '+c.dex+' : <span class="ko">vous êtes touché</span>, 1 + '+e.rd+' (dé)'+(e.rb?' '+sgn(e.rb)+' (bonus)':'')+' = <b>'+e.rtot+' PV perdus</b></p>';
+    else h+=' &gt; '+c.dex+' : <span class="ok">il vous rate</span></p>';
+    return h;
+  }
+  function renderCombat(){
+    const c=S.combat;
+    $("cbSetup").hidden=!!c; $("cbFight").hidden=!c;
+    if(!c){
+      const cur=S.parcours.length?S.parcours[S.parcours.length-1]:null, list=ENNEMIS[cur]||[], K=$("cbKnown");
+      K.hidden=!list.length; K.innerHTML=list.length?'<p class="small">Ennemi du paragraphe '+cur+' :</p>':'';
+      list.forEach((en,i)=>{ const b=document.createElement("button"); b.dataset.ei=i;
+        b.innerHTML='<b>Combattre : '+esc(en.nom)+'</b><span>Dextérité '+en.dex+', '+en.pv+' points de vie'+(en.bonus?', dommages '+sgn(en.bonus):'')+'</span>'; K.append(b);
+        if(en.narratif!==undefined){ const n=document.createElement("button"); n.dataset.ni=i;
+          n.innerHTML='<b>Mode narratif : victoire automatique</b><span>'+(en.narratif?'Vous perdez '+en.narratif+' points de vie':'Sans perte de points de vie')+(S.mode==="Narratif"?'':' (seulement si vous jouez en mode narratif)')+'</span>'; K.append(n); } });
+      return;
+    }
+    const M=$("cbMods"); M.innerHTML="";
+    (c.mods||[]).forEach((m,i)=>{ const b=document.createElement("button"); b.className="mod"; b.dataset.mi=i; b.setAttribute("aria-pressed",!!m.on);
+      b.innerHTML='<span class="box"></span><span>'+esc(m.label)+'</span>'; M.append(b); });
+    $("cbMe").textContent=S.name||"Vous";
+    $("cbMyPv").textContent=S.pv; $("cbMyMax").textContent=S.pvMax;
+    $("cbMyBar").firstElementChild.style.width=(S.pvMax>0?Math.max(0,Math.min(100,S.pv/S.pvMax*100)):0)+"%";
+    $("cbMyBar").classList.toggle("low",S.pvMax>0&&S.pv/S.pvMax<=.25);
+    const b=myBonus()+modBonus(c);
+    const hm=modHit(c);
+    $("cbMyInfo").innerHTML="Dextérité "+S.dex+(hm?" "+sgn(hm)+" = "+(S.dex+hm):"")+"<br>Dégâts : 1 + dé"+(b?" "+sgn(b):"");
+    $("cbFoeName").textContent=c.nom;
+    $("cbFoePv").textContent=c.pv; $("cbFoeMax").textContent=c.pvMax;
+    $("cbFoeBar").firstElementChild.style.width=(c.pvMax>0?Math.max(0,c.pv/c.pvMax*100):0)+"%";
+    $("cbFoeInfo").innerHTML="Dextérité "+c.dex+"<br>Dégâts : 1 + dé"+(c.bonus?" "+sgn(c.bonus):"");
+    const last=c.log[0];
+    $("cbLast").hidden=!last; if(last) $("cbLast").innerHTML='<p class="small">Tour '+last.t+'</p>'+turnHTML(last,c);
+    const L=$("cbLogList"); L.innerHTML=""; c.log.slice(1).forEach(e=>{ const li=document.createElement("li"); li.innerHTML=turnHTML(e,c).replace(/<\/?p>/g," "); L.append(li); });
+    $("cbLog").hidden=c.log.length<2;
+    const R=$("cbResult");
+    if(c.fini){
+      R.hidden=false; R.className="result "+c.fini;
+      const iss=c[c.fini];
+      R.innerHTML='<strong>'+(c.fini==="win"?"Victoire !":"Défaite")+'</strong>'+(c.auto&&c.fini==="lose"?"Mode narratif : la perte de "+c.autoPv+" points de vie vous laisse sans points de vie.":c.auto?"Victoire automatique en mode narratif"+(c.autoPv?" : vous avez perdu "+c.autoPv+" points de vie.":"."):c.fini==="win"?esc(c.nom)+" n’a plus de points de vie.":"Vous n’avez plus de points de vie.")
+        +(iss?'<br>'+issueText(iss,true)+'.<button class="btn-main" id="cbIssue">'+issueText(iss,false)+'</button>':(c.debut?'<br>Suivez les indications du paragraphe '+c.debut+'.':''));
+      $("cbTurn").hidden=true; $("cbEnd").textContent="Terminer le combat";
+    } else {
+      R.hidden=true; $("cbTurn").hidden=false; $("cbTurn").textContent="Jouer le tour "+c.tour; $("cbEnd").textContent="Abandonner le combat";
+    }
+  }
+  function issueText(iss,phrase){
+    const parts=[];
+    if(iss.con) parts.push((iss.con<0?"retirer ":"ajouter ")+Math.abs(iss.con)+" point"+(Math.abs(iss.con)>1?"s":"")+" de Constitution"+(iss.deficitPv?" (ou "+iss.deficitPv+" PV par point manquant)":""));
+    if(iss.pv) parts.push((iss.pv<0?"retirer ":"ajouter ")+Math.abs(iss.pv)+" point"+(Math.abs(iss.pv)>1?"s":"")+" de vie");
+    if(iss.to) parts.push((iss.deficitPv?"si vous êtes toujours en vie, ":"")+"aller au "+iss.to);
+    const t=parts.join(" et ");
+    return phrase?"Le livre indique : "+t:t.charAt(0).toUpperCase()+t.slice(1);
+  }
+  $("cbResult").addEventListener("click",e=>{
+    if(!e.target.closest("#cbIssue")) return;
+    const c=S.combat; if(!c||!c.fini) return; const iss=c[c.fini]; if(!iss) return;
+    if(!confirm(issueText(iss,false)+" ?")) return;
+    let dead=false, lost=0;
+    change(()=>{
+      if(iss.con<0&&iss.deficitPv){
+        const need=-iss.con, take=Math.min(need,Math.max(0,S.con)); S.con-=take;
+        lost=(need-take)*iss.deficitPv; S.pv=Math.max(0,S.pv-lost); dead=S.pv<=0;
+      } else if(iss.con) S.con+=iss.con;
+      if(iss.pv) S.pv=Math.max(0,S.pvMax>0?Math.min(S.pvMax,S.pv+iss.pv):S.pv+iss.pv);
+      if(iss.to&&!dead) S.parcours.push(iss.to);
+      S.combat=null;
+    });
+    if(dead){ alert("Faute de Constitution, vous perdez "+lost+" points de vie et n’êtes plus en vie. Suivez les indications du livre."); return; }
+    if(lost) alert("Constitution insuffisante : vous perdez "+lost+" points de vie.");
+    if(iss.to){ showNotice(iss.to); $("h-par").scrollIntoView({behavior:"smooth"}); }
+  });
+  $("cbStart").onclick=()=>{
+    const nom=$("cbName").value.trim()||"Ennemi", dex=num($("cbDex").value), pv=num($("cbPv").value), bonus=num($("cbBonus").value);
+    if(dex<=0){ $("cbDex").focus(); status("Indiquez la Dextérité de l’ennemi"); return; }
+    if(pv<=0){ $("cbPv").focus(); status("Indiquez les points de vie de l’ennemi"); return; }
+    if(S.pv<=0){ alert("Votre personnage n’a plus de points de vie : mettez à jour vos PV avant de combattre."); return; }
+    startCombat(nom,dex,pv,bonus,[]);
+    ["cbName","cbDex","cbPv","cbBonus"].forEach(id=>$(id).value="");
+  };
+  $("cbKnown").addEventListener("click",e=>{
+    const nb=e.target.closest("button[data-ni]");
+    if(nb){
+      const cur=S.parcours[S.parcours.length-1], en=ENNEMIS[cur][+nb.dataset.ni];
+      if(S.mode!=="Narratif"&&!confirm("Votre fiche n’est pas en mode narratif. Appliquer quand même la victoire automatique ?")) return;
+      if(!confirm("Victoire automatique contre "+en.nom+(en.narratif?" : retirer "+en.narratif+" points de vie ?":" ?"))) return;
+      change(()=>{ S.pv=Math.max(0,S.pv-en.narratif);
+        const ko=S.pv<=0&&en.narratifKo;
+        S.combat={nom:en.nom,dex:en.dex,pv:ko?en.pv:0,pvMax:en.pv,bonus:en.bonus||0,tour:1,log:[],fini:ko?"lose":"win",auto:true,autoPv:en.narratif,debut:cur,mods:[],win:en.win||null,lose:ko?en.narratifKo:(en.lose||null)}; });
+      $("h-cb").scrollIntoView({behavior:"smooth"}); return;
+    }
+    const b=e.target.closest("button[data-ei]"); if(!b) return;
+    if(S.pv<=0){ alert("Votre personnage n’a plus de points de vie : mettez à jour vos PV avant de combattre."); return; }
+    const cur=S.parcours[S.parcours.length-1], en=ENNEMIS[cur][+b.dataset.ei];
+    startCombat(en.nom,en.dex,en.pv,en.bonus||0,en.mods,{win:en.win,lose:en.lose});
+  });
+  $("cbMods").addEventListener("click",e=>{
+    const b=e.target.closest(".mod"); const c=S.combat; if(!b||!c) return;
+    change(()=>{ c.mods[+b.dataset.mi].on=!c.mods[+b.dataset.mi].on; });
+  });
+  $("cbTurn").onclick=()=>{
+    const c=S.combat; if(!c||c.fini) return;
+    change(()=>{
+      const e={t:c.tour,a:[d6(),d6()],dexA:S.dex+modHit(c)};
+      e.hit=e.a[0]+e.a[1]<=e.dexA;
+      if(e.hit){ e.d=d6(); e.b=myBonus()+modBonus(c); e.tot=Math.max(0,1+e.d+e.b); c.pv=Math.max(0,c.pv-e.tot); }
+      if(c.pv>0){
+        e.r=[d6(),d6()]; e.rhit=e.r[0]+e.r[1]<=c.dex;
+        if(e.rhit){ e.rd=d6(); e.rb=c.bonus; e.rtot=Math.max(0,1+e.rd+e.rb); S.pv=Math.max(0,S.pv-e.rtot); }
+      }
+      c.log.unshift(e); c.tour++;
+      if(c.pv<=0) c.fini="win"; else if(S.pv<=0) c.fini="lose";
+    });
+    if(navigator.vibrate) navigator.vibrate(S.combat.fini?[40,60,40]:30);
+  };
+  $("cbFoeMinus").onclick=()=>{ const c=S.combat; if(c&&!c.fini) change(()=>{ c.pv=Math.max(0,c.pv-1); if(c.pv<=0) c.fini="win"; }); };
+  $("cbFoePlus").onclick=()=>{ const c=S.combat; if(c) change(()=>{ c.pv=Math.min(c.pvMax,c.pv+1); if(c.fini==="win"&&c.pv>0) c.fini=null; }); };
+  $("cbEnd").onclick=()=>{
+    const c=S.combat; if(!c) return;
+    if(c.fini||confirm("Abandonner le combat en cours ?")) change(()=>S.combat=null);
+  };
 
   $("reset").onclick=()=>{ if(confirm("Effacer toute la fiche et commencer une nouvelle partie ?")) change(()=>{ S=blank(); }); };
 
