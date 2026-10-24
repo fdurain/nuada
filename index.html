@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#4F6B3A">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Nuada">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>Fiche de personnage – La Confrérie de Nuada</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Uncial+Antiqua&family=Alegreya+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#E4E7E1; --sheet:#F3F4EF; --ink:#1E2622; --muted:#5B6660; --line:#2A332E;
+  --soft:#CFD5CC; --moss:#4F6B3A; --moss-ink:#F3F4EF; --blood:#8E2B22; --gold:#A57A2C;
+  --field:#FFFFFF;
+  color-scheme:light;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#141A17; --sheet:#1D2420; --ink:#E6EAE3; --muted:#9AA69F; --line:#C9D1C8;
+    --soft:#34403A; --moss:#8DB06B; --moss-ink:#141A17; --blood:#E07466; --gold:#D3A757;
+    --field:#252D29; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#141A17; --sheet:#1D2420; --ink:#E6EAE3; --muted:#9AA69F; --line:#C9D1C8;
+  --soft:#34403A; --moss:#8DB06B; --moss-ink:#141A17; --blood:#E07466; --gold:#D3A757;
+  --field:#252D29; color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Alegreya Sans",system-ui,-apple-system,"Segoe UI",sans-serif;font-size:17px;line-height:1.4;-webkit-tap-highlight-color:transparent}
+main{max-width:560px;margin:0 auto;padding:20px 14px 48px}
+h1,h2{font-family:"Uncial Antiqua","Alegreya Sans",serif;font-weight:400;margin:0}
+header{text-align:center;padding:8px 0 18px}
+header h1{font-size:clamp(1.6rem,7vw,2.1rem);line-height:1.1;letter-spacing:.01em}
+header p{margin:4px 0 0;color:var(--muted);font-size:.95rem}
+.name{display:block;width:100%;margin-top:14px;text-align:center;font:inherit;font-size:1.25rem;font-weight:700;background:transparent;border:0;border-bottom:2px dashed var(--soft);color:var(--ink);padding:6px 4px}
+.name:focus{outline:none;border-bottom-color:var(--moss)}
+section{background:var(--sheet);border:2px solid var(--line);border-radius:6px 10px 7px 9px;padding:14px;margin-top:14px}
+h2{font-size:1.15rem;margin-bottom:10px}
+label.small,.small{font-size:.9rem;color:var(--muted)}
+input,textarea{font:inherit;color:var(--ink);background:var(--field);border:1.5px solid var(--soft);border-radius:6px;padding:8px 10px;width:100%}
+textarea{resize:vertical;min-height:70px}
+input:focus,textarea:focus,button:focus-visible{outline:3px solid color-mix(in srgb,var(--moss) 55%,transparent);outline-offset:1px;border-color:var(--moss)}
+button{font:inherit;cursor:pointer;color:var(--ink)}
+
+/* Points de vie — l'élément fort */
+.life{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:10px}
+.big{font-family:"Uncial Antiqua",serif;font-size:3.6rem;line-height:1;text-align:center;font-variant-numeric:tabular-nums}
+.big small{font-family:"Alegreya Sans",sans-serif;font-size:1.2rem;color:var(--muted);font-weight:700}
+.round{width:58px;height:58px;border-radius:50%;border:2px solid var(--line);background:var(--field);font-size:1.8rem;font-weight:800;line-height:1;display:grid;place-items:center}
+.round.minus{color:var(--blood)}
+.round:active{transform:scale(.94)}
+.bar{height:12px;border:2px solid var(--line);border-radius:8px;margin-top:12px;overflow:hidden;background:var(--field)}
+.bar span{display:block;height:100%;background:var(--moss);transition:width .25s ease}
+.bar.low span{background:var(--blood)}
+.quick{display:flex;gap:8px;margin-top:12px;align-items:center;flex-wrap:wrap}
+.quick button{border:1.5px solid var(--soft);background:var(--field);border-radius:20px;padding:5px 12px;font-weight:700}
+.quick .grow{flex:1}
+.maxrow{display:flex;align-items:center;gap:8px;margin-top:12px}
+.maxrow input{width:80px;text-align:center;font-weight:700}
+.dead{margin-top:10px;color:var(--blood);font-weight:700;display:none}
+
+/* Caractéristiques */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.stat{text-align:center;border:1.5px solid var(--soft);border-radius:8px;padding:8px 4px;background:var(--field)}
+.stat .lbl{font-weight:700;font-size:.95rem}
+.stat input{border:0;background:transparent;text-align:center;font-size:2rem;font-weight:800;padding:2px 0;width:100%}
+.stat .pm{display:flex;justify-content:center;gap:6px}
+.stat .pm button{width:38px;height:34px;border:1.5px solid var(--soft);border-radius:6px;background:var(--sheet);font-weight:800;font-size:1.2rem}
+
+/* Armes */
+.weapons{display:grid;grid-template-columns:1fr 84px;gap:6px 8px;align-items:center}
+.weapons .hd{font-size:.9rem;color:var(--muted);font-weight:700}
+.weapons .b{text-align:center}
+
+/* Mode de jeu */
+.seg{display:grid;grid-template-columns:repeat(3,1fr);border:2px solid var(--line);border-radius:8px;overflow:hidden}
+.seg button{border:0;background:var(--field);padding:10px 4px;font-weight:700;border-right:1.5px solid var(--soft)}
+.seg button:last-child{border-right:0}
+.seg button[aria-pressed="true"]{background:var(--moss);color:var(--moss-ink)}
+
+/* Réputation */
+.rep{display:grid;grid-template-columns:repeat(11,1fr);border:2px solid var(--line);border-radius:6px;overflow:hidden}
+.rep button{border:0;border-right:1px solid var(--soft);background:var(--field);padding:10px 0;font-size:.85rem;font-weight:700;font-variant-numeric:tabular-nums;min-width:0}
+.rep button:last-child{border-right:0}
+.rep button[aria-pressed="true"]{background:var(--gold);color:#1A1408}
+.rep-ends{display:flex;justify-content:space-between;margin-top:4px}
+
+/* Jours */
+.days{display:flex;gap:10px;margin-bottom:12px}
+.days button{width:52px;height:52px;border:2px solid var(--line);border-radius:6px;background:var(--field);font-weight:800;font-size:1.1rem;position:relative}
+.days button[aria-pressed="true"]{background:var(--ink);color:var(--sheet)}
+
+/* Inventaire */
+.inv{display:grid;grid-template-columns:1fr;gap:6px}
+.slot{display:grid;grid-template-columns:40px 1fr;align-items:center;gap:6px}
+.slot input[type=checkbox]{appearance:none;-webkit-appearance:none;width:30px;height:30px;margin:0 5px;border:2px solid var(--line);border-radius:4px;background:var(--field);padding:0;display:grid;place-items:center}
+.slot input[type=checkbox]:checked{background:var(--moss);border-color:var(--moss)}
+.slot input[type=checkbox]:checked::after{content:"";width:8px;height:14px;border:solid var(--moss-ink);border-width:0 3px 3px 0;transform:rotate(45deg) translate(-1px,-2px)}
+.slot.used input[type=text]{border-color:var(--moss)}
+.count{float:right;font-family:"Alegreya Sans",sans-serif;font-size:.95rem;color:var(--muted);font-weight:700}
+.hint{margin:10px 0 0;font-size:.9rem;color:var(--muted)}
+
+/* Parcours */
+.now{display:flex;align-items:baseline;gap:10px;margin-bottom:10px}
+.now .big{font-size:3rem}
+.addrow{display:grid;grid-template-columns:1fr auto;gap:8px}
+.addrow input{font-size:1.2rem;font-weight:700}
+.addrow button{border:2px solid var(--line);background:var(--moss);color:var(--moss-ink);border-radius:6px;padding:0 18px;font-weight:800}
+.trail{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;max-height:220px;overflow-y:auto;padding:2px}
+.trail button{border:1.5px solid var(--soft);background:var(--field);border-radius:14px;padding:3px 10px;font-weight:700;font-variant-numeric:tabular-nums}
+.trail button:last-child{border-color:var(--moss);background:var(--moss);color:var(--moss-ink)}
+.trailbar{display:flex;justify-content:space-between;align-items:center;margin-top:10px}
+.link{border:0;background:none;color:var(--blood);font-weight:700;padding:4px 0}
+footer{margin-top:22px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.status{font-size:.9rem;color:var(--muted)}
+.reset{border:1.5px solid var(--blood);color:var(--blood);background:transparent;border-radius:6px;padding:8px 14px;font-weight:700}
+.backup{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}
+.backup button{border:1.5px solid var(--line);background:var(--sheet);border-radius:6px;padding:10px 8px;font-weight:700}
+@media (min-width:480px){.inv{grid-template-columns:1fr 1fr;column-gap:14px}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>La Confrérie de Nuada</h1>
+    <p>Feuille de personnage</p>
+    <input class="name" id="name" placeholder="Nom de votre personnage" autocomplete="off">
+  </header>
+
+  <section aria-labelledby="h-par">
+    <h2 id="h-par">Parcours</h2>
+    <div class="now"><span class="small">Paragraphe actuel</span><span class="big" id="parNow">–</span></div>
+    <div class="addrow">
+      <input id="parIn" type="number" inputmode="numeric" min="1" placeholder="Numéro du paragraphe" aria-label="Numéro du paragraphe">
+      <button id="parAdd">Ajouter</button>
+    </div>
+    <div class="trail" id="trail" aria-label="Paragraphes déjà lus, dans l’ordre"></div>
+    <div class="trailbar"><span class="small" id="parCount"></span><button class="link" id="parUndo">Retirer le dernier</button></div>
+    <p class="hint">Touchez un numéro pour le corriger ou le supprimer.</p>
+  </section>
+
+  <section aria-labelledby="h-pv">
+    <h2 id="h-pv">Points de vie</h2>
+    <div class="life">
+      <button class="round minus" id="pvMinus" aria-label="Retirer 1 point de vie">−</button>
+      <div class="big" aria-live="polite"><span id="pvNow">0</span> <small>/ <span id="pvMaxShow">0</span></small></div>
+      <button class="round" id="pvPlus" aria-label="Ajouter 1 point de vie">+</button>
+    </div>
+    <div class="bar" id="bar"><span></span></div>
+    <div class="quick">
+      <button data-d="-5">−5</button><button data-d="-2">−2</button><button data-d="2">+2</button><button data-d="5">+5</button>
+      <span class="grow"></span>
+      <button id="pvFull">Soigner tout</button>
+    </div>
+    <div class="maxrow"><label class="small" for="pvMax">Points de vie maximum</label><input id="pvMax" type="number" inputmode="numeric" min="0"></div>
+    <p class="dead" id="dead">Votre personnage n’a plus de points de vie.</p>
+  </section>
+
+  <section aria-labelledby="h-car">
+    <h2 id="h-car">Caractéristiques</h2>
+    <div class="stats">
+      <div class="stat" data-k="dex"><div class="lbl">Dextérité</div><input type="number" inputmode="numeric" aria-label="Dextérité"><div class="pm"><button data-s="-1" aria-label="Dextérité moins 1">−</button><button data-s="1" aria-label="Dextérité plus 1">+</button></div></div>
+      <div class="stat" data-k="con"><div class="lbl">Constitution</div><input type="number" inputmode="numeric" aria-label="Constitution"><div class="pm"><button data-s="-1" aria-label="Constitution moins 1">−</button><button data-s="1" aria-label="Constitution plus 1">+</button></div></div>
+      <div class="stat" data-k="chance"><div class="lbl">Chance</div><input type="number" inputmode="numeric" aria-label="Chance"><div class="pm"><button data-s="-1" aria-label="Chance moins 1">−</button><button data-s="1" aria-label="Chance plus 1">+</button></div></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="h-tal">
+    <h2 id="h-tal">Talents</h2>
+    <textarea id="talents" aria-labelledby="h-tal" placeholder="Vos talents"></textarea>
+  </section>
+
+  <section aria-labelledby="h-arm">
+    <h2 id="h-arm">Armes</h2>
+    <div class="weapons" id="weapons"><div class="hd">Nom</div><div class="hd b">Bonus</div></div>
+  </section>
+
+  <section aria-labelledby="h-dmg">
+    <h2 id="h-dmg">Dommages actuels</h2>
+    <input id="dmg" aria-labelledby="h-dmg" placeholder="Ex. 1d6 + 2" autocomplete="off">
+  </section>
+
+  <section aria-labelledby="h-mode">
+    <h2 id="h-mode">Mode de jeu</h2>
+    <div class="seg" id="mode" role="group" aria-labelledby="h-mode">
+      <button data-v="Narratif">Narratif</button><button data-v="Simplifié">Simplifié</button><button data-v="Mortel">Mortel</button>
+    </div>
+  </section>
+
+  <section aria-labelledby="h-rep">
+    <h2 id="h-rep">Réputation</h2>
+    <div class="rep" id="rep" role="group" aria-labelledby="h-rep"></div>
+    <div class="rep-ends small"><span>Mauvaise</span><span>Bonne</span></div>
+  </section>
+
+  <section aria-labelledby="h-jours">
+    <h2 id="h-jours">Jours écoulés</h2>
+    <div class="days" id="days" role="group" aria-labelledby="h-jours"></div>
+    <label class="small" for="wake">Prochain réveil</label>
+    <input id="wake" autocomplete="off" placeholder="Où et quand vous vous réveillez">
+  </section>
+
+  <section aria-labelledby="h-inv">
+    <h2 id="h-inv">Inventaire <span class="count" id="invCount"></span></h2>
+    <div class="inv" id="inv"></div>
+    <p class="hint">Si l’inventaire est plein, vous pouvez jeter des choses où que vous soyez afin de libérer de la place.</p>
+  </section>
+
+  <footer>
+    <span class="status" id="status">Chargement…</span>
+    <button class="reset" id="reset">Nouvelle partie</button>
+  </footer>
+  <div class="backup">
+    <button id="exportBtn">Exporter la sauvegarde</button>
+    <button id="importBtn">Importer une sauvegarde</button>
+    <input type="file" id="importFile" accept="application/json,.json" hidden>
+  </div>
+</main>
+
+<script>
+(function(){
+  const KEY = "nuada-fiche-v1";
+  const blank = () => ({
+    name:"", pvMax:0, pv:0, dex:0, con:0, chance:0, dmg:"", talents:"",
+    weapons:Array.from({length:5},()=>({n:"",b:""})),
+    mode:"", rep:0, days:[false,false,false,false], wake:"",
+    inv:Array.from({length:14},()=>({c:false,t:""})), parcours:[], updated:0
+  });
+  let S = blank();
+  let timer = null;
+  const $ = id => document.getElementById(id);
+  const status = t => { $("status").textContent = t; };
+
+  function normalize(o){
+    const b = blank(); const r = Object.assign(b, o || {});
+    r.weapons = b.weapons.map((w,i)=>Object.assign({n:"",b:""},(o&&o.weapons&&o.weapons[i])||{}));
+    r.inv = b.inv.map((w,i)=>Object.assign({c:false,t:""},(o&&o.inv&&o.inv[i])||{}));
+    r.days = [0,1,2,3].map(i=>!!(o&&o.days&&o.days[i]));
+    r.parcours = (o&&Array.isArray(o.parcours)?o.parcours:[]).map(n=>parseInt(n,10)).filter(n=>n>0);
+    return r;
+  }
+
+  // --- construction des listes ---
+  const W = $("weapons");
+  for(let i=0;i<5;i++){
+    const n=document.createElement("input"); n.dataset.wi=i; n.dataset.f="n"; n.placeholder="Arme "+(i+1); n.autocomplete="off"; n.setAttribute("aria-label","Nom de l’arme "+(i+1));
+    const b=document.createElement("input"); b.dataset.wi=i; b.dataset.f="b"; b.className="b"; b.placeholder="+0"; b.autocomplete="off"; b.setAttribute("aria-label","Bonus de l’arme "+(i+1));
+    W.append(n,b);
+  }
+  const R = $("rep");
+  for(let v=-5;v<=5;v++){ const bt=document.createElement("button"); bt.dataset.v=v; bt.textContent=v>0?"+"+v:String(v).replace("-","−"); bt.setAttribute("aria-label","Réputation "+v); R.append(bt); }
+  const D = $("days");
+  for(let i=0;i<4;i++){ const bt=document.createElement("button"); bt.dataset.i=i; bt.textContent=i+1; bt.setAttribute("aria-label","Jour "+(i+1)); D.append(bt); }
+  const I = $("inv");
+  for(let i=0;i<14;i++){
+    const row=document.createElement("div"); row.className="slot";
+    const c=document.createElement("input"); c.type="checkbox"; c.dataset.ii=i; c.setAttribute("aria-label","Emplacement "+(i+1)+" occupé");
+    const t=document.createElement("input"); t.type="text"; t.dataset.it=i; t.autocomplete="off"; t.placeholder="Emplacement "+(i+1);
+    row.append(c,t); I.append(row);
+  }
+
+  // --- rendu ---
+  function render(){
+    if(document.activeElement!==$("name")) $("name").value=S.name;
+    if(document.activeElement!==$("pvMax")) $("pvMax").value=S.pvMax||"";
+    $("pvNow").textContent=S.pv; $("pvMaxShow").textContent=S.pvMax;
+    const pct=S.pvMax>0?Math.max(0,Math.min(100,S.pv/S.pvMax*100)):0;
+    $("bar").firstElementChild.style.width=pct+"%";
+    $("bar").classList.toggle("low",S.pvMax>0&&pct<=25);
+    $("dead").style.display=(S.pvMax>0&&S.pv<=0)?"block":"none";
+    document.querySelectorAll(".stat").forEach(el=>{const inp=el.querySelector("input"); if(document.activeElement!==inp) inp.value=S[el.dataset.k];});
+    if(document.activeElement!==$("talents")) $("talents").value=S.talents;
+    if(document.activeElement!==$("dmg")) $("dmg").value=S.dmg;
+    if(document.activeElement!==$("wake")) $("wake").value=S.wake;
+    W.querySelectorAll("input").forEach(inp=>{ if(document.activeElement!==inp) inp.value=S.weapons[inp.dataset.wi][inp.dataset.f]; });
+    $("mode").querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.v===S.mode));
+    R.querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed",+b.dataset.v===S.rep));
+    D.querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed",S.days[b.dataset.i]));
+    let used=0;
+    I.querySelectorAll(".slot").forEach((row,i)=>{
+      const c=row.children[0], t=row.children[1];
+      c.checked=S.inv[i].c; if(document.activeElement!==t) t.value=S.inv[i].t;
+      const u=S.inv[i].c||S.inv[i].t.trim()!==""; row.classList.toggle("used",u); if(u) used++;
+    });
+    $("invCount").textContent=used+" / 14";
+    const P=S.parcours;
+    $("parNow").textContent=P.length?P[P.length-1]:"–";
+    const T=$("trail"); T.textContent="";
+    P.forEach((n,i)=>{const b=document.createElement("button"); b.dataset.pi=i; b.textContent=n; b.setAttribute("aria-label","Étape "+(i+1)+" : paragraphe "+n); T.append(b);});
+    T.scrollTop=T.scrollHeight;
+    $("parCount").textContent=P.length?P.length+(P.length>1?" paragraphes lus":" paragraphe lu"):"Aucun paragraphe noté";
+    $("parUndo").style.visibility=P.length?"visible":"hidden";
+  }
+
+  // --- sauvegarde ---
+  function save(){
+    S.updated=Date.now();
+    try{ localStorage.setItem(KEY,JSON.stringify(S)); }catch(e){}
+    status("Modifié…");
+    clearTimeout(timer);
+    timer=setTimeout(()=>status("Enregistré sur cet appareil"),400);
+  }
+  const change = fn => { fn(); render(); save(); };
+  const num = v => { const n=parseInt(v,10); return isNaN(n)?0:n; };
+
+  // --- événements ---
+  $("name").addEventListener("input",e=>{S.name=e.target.value; save();});
+  $("pvMinus").onclick=()=>change(()=>S.pv=Math.max(0,S.pv-1));
+  $("pvPlus").onclick=()=>change(()=>S.pv=S.pvMax>0?Math.min(S.pvMax,S.pv+1):S.pv+1);
+  document.querySelectorAll(".quick [data-d]").forEach(b=>b.onclick=()=>change(()=>{
+    const d=+b.dataset.d; S.pv=Math.max(0,S.pv+d); if(S.pvMax>0) S.pv=Math.min(S.pvMax,S.pv);
+  }));
+  $("pvFull").onclick=()=>change(()=>S.pv=S.pvMax);
+  $("pvMax").addEventListener("input",e=>change(()=>{
+    const wasFull = S.pv===S.pvMax; S.pvMax=Math.max(0,num(e.target.value));
+    if(wasFull||S.pv>S.pvMax) S.pv=S.pvMax;
+  }));
+  document.querySelectorAll(".stat").forEach(el=>{
+    const k=el.dataset.k;
+    el.querySelector("input").addEventListener("input",e=>{S[k]=num(e.target.value); save();});
+    el.querySelectorAll("[data-s]").forEach(b=>b.onclick=()=>change(()=>S[k]+=+b.dataset.s));
+  });
+  $("talents").addEventListener("input",e=>{S.talents=e.target.value; save();});
+  $("dmg").addEventListener("input",e=>{S.dmg=e.target.value; save();});
+  $("wake").addEventListener("input",e=>{S.wake=e.target.value; save();});
+  W.addEventListener("input",e=>{const t=e.target; S.weapons[t.dataset.wi][t.dataset.f]=t.value; save();});
+  $("mode").addEventListener("click",e=>{const b=e.target.closest("button"); if(b) change(()=>S.mode=S.mode===b.dataset.v?"":b.dataset.v);});
+  R.addEventListener("click",e=>{const b=e.target.closest("button"); if(b) change(()=>S.rep=+b.dataset.v);});
+  D.addEventListener("click",e=>{const b=e.target.closest("button"); if(b) change(()=>S.days[b.dataset.i]=!S.days[b.dataset.i]);});
+  I.addEventListener("change",e=>{const t=e.target; if(t.dataset.ii!==undefined) change(()=>S.inv[t.dataset.ii].c=t.checked);});
+  I.addEventListener("input",e=>{const t=e.target; if(t.dataset.it!==undefined){ S.inv[t.dataset.it].t=t.value; render(); save(); }});
+  function addPar(){ const n=parseInt($("parIn").value,10); if(!(n>0)) { $("parIn").focus(); return; } change(()=>S.parcours.push(n)); $("parIn").value=""; $("parIn").focus(); }
+  $("parAdd").onclick=addPar;
+  $("parIn").addEventListener("keydown",e=>{ if(e.key==="Enter") addPar(); });
+  $("parUndo").onclick=()=>{ if(S.parcours.length) change(()=>S.parcours.pop()); };
+  $("trail").addEventListener("click",e=>{
+    const b=e.target.closest("button"); if(!b) return; const i=+b.dataset.pi;
+    const v=prompt("Étape "+(i+1)+" : corrigez le numéro, ou videz le champ pour la supprimer.", S.parcours[i]);
+    if(v===null) return;
+    const n=parseInt(v,10);
+    change(()=>{ if(n>0) S.parcours[i]=n; else S.parcours.splice(i,1); });
+  });
+  $("reset").onclick=()=>{ if(confirm("Effacer toute la fiche et commencer une nouvelle partie ?")) change(()=>{ S=blank(); }); };
+
+  // --- chargement ---
+  const SEED=[1,281,170,131,191,135,120,162,79,16,52,261,251,149,337,288,133,157,167,87,178,339,20,219,136,61,315,83,35,179,239,324,24,176,194,259,296,301,98,238,31,348,69,269,19,143,67,305,137,306,139,101,144,140,185,50,262,26,299,49,176,30];
+  let raw=null; try{ raw=localStorage.getItem(KEY); }catch(e){}
+  if(raw){ try{ S=normalize(JSON.parse(raw)); }catch(e){} }
+  else { S=normalize({parcours:SEED}); try{ localStorage.setItem(KEY,JSON.stringify(S)); }catch(e){} }
+  render(); status("Enregistré sur cet appareil");
+
+  // --- sauvegarde / restauration ---
+  $("exportBtn").onclick=()=>{
+    const blob=new Blob([JSON.stringify(S,null,2)],{type:"application/json"});
+    const a=document.createElement("a"); a.href=URL.createObjectURL(blob);
+    const d=new Date(); a.download="nuada-sauvegarde-"+d.toISOString().slice(0,10)+".json";
+    document.body.append(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),2000);
+    status("Sauvegarde téléchargée");
+  };
+  $("importBtn").onclick=()=>$("importFile").click();
+  $("importFile").onchange=async e=>{
+    const f=e.target.files[0]; e.target.value=""; if(!f) return;
+    try{
+      const o=JSON.parse(await f.text());
+      if(!confirm("Remplacer la fiche actuelle par cette sauvegarde ?")) return;
+      change(()=>{ S=normalize(o); });
+      status("Sauvegarde restaurée");
+    }catch(err){ status("Fichier illisible : choisissez un fichier .json exporté par l’appli"); }
+  };
+
+  if("serviceWorker" in navigator){ window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{})); }
+
+})();
+</script>
+</body>
+</html>
