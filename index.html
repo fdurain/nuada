@@ -44,6 +44,11 @@ h1,h2{font-family:"Uncial Antiqua","Alegreya Sans",serif;font-weight:400;margin:
 header{text-align:center;padding:8px 0 18px}
 header h1{font-size:clamp(1.6rem,7vw,2.1rem);line-height:1.1;letter-spacing:.01em}
 header p{margin:4px 0 0;color:var(--muted);font-size:.95rem}
+header .who{color:var(--ink);font-weight:700;font-size:1.15rem;margin-top:10px}
+header .who:empty{display:none}
+.gear{margin-top:12px;padding:8px 16px;border:1.5px solid var(--soft);border-radius:20px;background:var(--field);color:var(--ink);font:inherit;font-weight:700}
+.gear[aria-expanded=true]{background:var(--moss);color:#fff;border-color:var(--moss)}
+#settings .name{margin-top:4px}
 .name{display:block;width:100%;margin-top:14px;text-align:center;font:inherit;font-size:1.25rem;font-weight:700;background:transparent;border:0;border-bottom:2px dashed var(--soft);color:var(--ink);padding:6px 4px}
 .name:focus{outline:none;border-bottom-color:var(--moss)}
 section{background:var(--sheet);border:2px solid var(--line);border-radius:6px 10px 7px 9px;padding:14px;margin-top:14px}
@@ -241,8 +246,18 @@ main{padding-bottom:110px}
   <header>
     <h1>La Confrérie de Nuada</h1>
     <p>Feuille de personnage</p>
-    <input class="name" id="name" placeholder="Nom de votre personnage" autocomplete="off">
+    <p class="who" id="whoShow"></p>
+    <button class="gear" id="setBtn" aria-expanded="false">⚙ Réglages de la partie</button>
   </header>
+  <div id="settings" hidden>
+    <section aria-labelledby="h-set">
+      <h2 id="h-set">Réglages de la partie</h2>
+      <p class="small">À remplir en début de partie. Tu n’as normalement plus besoin d’y revenir.</p>
+      <label class="small" for="name">Nom du personnage</label>
+      <input class="name" id="name" placeholder="Nom de votre personnage" autocomplete="off">
+    </section>
+    <section aria-labelledby="h-pvm" id="pvmSec"><h2 id="h-pvm">Points de vie maximum</h2></section>
+  </div>
 
   <section aria-labelledby="h-par">
     <h2 id="h-par">Parcours</h2>
@@ -339,7 +354,7 @@ main{padding-bottom:110px}
   </section>
 
   <section aria-labelledby="h-arm">
-    <h2 id="h-arm">Armes</h2>
+    <h2 id="h-arm">Armes <span class="count" id="dmgShow"></span></h2>
     <div class="weapons" id="weapons"><div class="hd">Nom</div><div class="hd b">Bonus</div></div>
   </section>
 
@@ -397,6 +412,19 @@ main{padding-bottom:110px}
   </div>
 </div>
 <script>
+(function(){
+  const set=document.getElementById("settings"), main=document.querySelector("main");
+  const sec=id=>document.getElementById(id).closest("section");
+  [sec("h-mode"), sec("h-tal"), sec("h-dmg")].forEach(x=>set.append(x));
+  document.getElementById("pvmSec").append(document.querySelector(".maxrow"));
+  set.append(main.querySelector("footer"), main.querySelector(".backup"));
+  const back=document.createElement("button"); back.className="gear"; back.id="setBack"; back.textContent="← Retour au jeu"; back.style.cssText="display:block;margin:6px auto 30px"; set.append(back);
+  document.querySelector("#h-dmg").insertAdjacentHTML("afterend",'<p class="small">Calculé automatiquement : somme des bonus de tes armes. Tu peux le corriger ici.</p>');
+  const game=[...main.children].filter(x=>x.tagName==="SECTION");
+  function show(on){ set.hidden=!on; game.forEach(x=>x.hidden=on); document.getElementById("setBtn").setAttribute("aria-expanded",on); window.scrollTo(0,0); }
+  document.getElementById("setBtn").onclick=()=>show(set.hidden);
+  back.onclick=()=>show(false);
+})();
 (function(){
   const KEY = "nuada-fiche-v1";
   const blank = () => ({
@@ -496,6 +524,7 @@ main{padding-bottom:110px}
   // --- rendu ---
   function render(){
     if(document.activeElement!==$("name")) $("name").value=S.name;
+    $("whoShow").textContent=S.name||"";
     if(document.activeElement!==$("pvMax")) $("pvMax").value=S.pvMax||"";
     $("pvNow").textContent=S.pv; $("pvMaxShow").textContent=S.pvMax;
     const pct=S.pvMax>0?Math.max(0,Math.min(100,S.pv/S.pvMax*100)):0;
@@ -505,6 +534,7 @@ main{padding-bottom:110px}
     document.querySelectorAll(".stat").forEach(el=>{const inp=el.querySelector("input"); if(document.activeElement!==inp) inp.value=S[el.dataset.k];});
     if(document.activeElement!==$("talents")) $("talents").value=S.talents;
     if(document.activeElement!==$("dmg")) $("dmg").value=S.dmg;
+    $("dmgShow").textContent=S.dmg?"Dommages "+S.dmg:"";
     if(document.activeElement!==$("wake")) $("wake").value=S.wake;
     W.querySelectorAll("input").forEach(inp=>{ if(document.activeElement!==inp) inp.value=S.weapons[inp.dataset.wi][inp.dataset.f]; });
     $("mode").querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.v===S.mode));
@@ -543,7 +573,7 @@ main{padding-bottom:110px}
   const num = v => { const n=parseInt(v,10); return isNaN(n)?0:n; };
 
   // --- événements ---
-  $("name").addEventListener("input",e=>{S.name=e.target.value; save();});
+  $("name").addEventListener("input",e=>{S.name=e.target.value; $("whoShow").textContent=S.name; save();});
   $("pvMinus").onclick=()=>change(()=>S.pv=Math.max(0,S.pv-1));
   $("pvPlus").onclick=()=>change(()=>S.pv=S.pvMax>0?Math.min(S.pvMax,S.pv+1):S.pv+1);
   document.querySelectorAll(".quick [data-d]").forEach(b=>b.onclick=()=>change(()=>{
@@ -564,9 +594,16 @@ main{padding-bottom:110px}
     el.querySelectorAll("[data-s]").forEach(b=>b.onclick=()=>change(()=>S[k]+=+b.dataset.s));
   });
   $("talents").addEventListener("input",e=>{S.talents=e.target.value; save();});
-  $("dmg").addEventListener("input",e=>{S.dmg=e.target.value; save();});
+  $("dmg").addEventListener("input",e=>{S.dmg=e.target.value; $("dmgShow").textContent=S.dmg?"Dommages "+S.dmg:""; save();});
   $("wake").addEventListener("input",e=>{S.wake=e.target.value; save();});
-  W.addEventListener("input",e=>{const t=e.target; S.weapons[t.dataset.wi][t.dataset.f]=t.value; save();});
+  function syncDmg(){
+    let best=null;
+    S.weapons.forEach(w=>{ if(!w.n.trim()) return; const m=String(w.b||"").replace(/\s+/g,"").replace("−","-").match(/[+-]?\d+/); const v=m?parseInt(m[0],10):0; best=(best===null?0:best)+v; });
+    S.dmg = best===null ? "" : (best>=0?"+"+best:String(best));
+    if(document.activeElement!==$("dmg")) $("dmg").value=S.dmg;
+    $("dmgShow").textContent=S.dmg?"Dommages "+S.dmg:"";
+  }
+  W.addEventListener("input",e=>{const t=e.target; S.weapons[t.dataset.wi][t.dataset.f]=t.value; syncDmg(); save();});
   $("mode").addEventListener("click",e=>{
     const b=e.target.closest("button"); if(!b) return;
     const next=S.mode===b.dataset.v?"":b.dataset.v;
@@ -579,17 +616,18 @@ main{padding-bottom:110px}
     const msg=S.days[i]?"Décocher le jour "+(i+1)+" ?":"Cocher le jour "+(i+1)+" comme écoulé ?";
     if(confirm(msg)) change(()=>S.days[i]=!S.days[i]);
   });
+  function removeSlot(i){ S.inv.splice(i,1); S.inv.push({c:false,t:"",q:1}); if(document.activeElement) document.activeElement.blur(); }
   I.addEventListener("click",e=>{
     const b=e.target.closest(".trash"); if(!b) return; const i=+b.dataset.ti;
     const txt=S.inv[i].t.trim(); if(!txt) return;
-    if(confirm("Jeter « "+txt+" » de l’emplacement "+(i+1)+" ?")) change(()=>{ S.inv[i].t=""; S.inv[i].c=false; S.inv[i].q=1; });
+    if(confirm("Jeter « "+txt+" » de l’emplacement "+(i+1)+" ?")) change(()=>removeSlot(i));
   });
   I.addEventListener("click",e=>{
     const m=e.target.closest("[data-qm]"), p=e.target.closest("[data-qp]"); if(!m&&!p) return;
     const i=+(m||p).dataset[m?"qm":"qp"], it=S.inv[i]; if(!it.t.trim()) return;
     if(p) return change(()=>it.q++);
     if(it.q>1) return change(()=>it.q--);
-    if(confirm("Plus de « "+it.t.trim()+" » : vider l’emplacement "+(i+1)+" ?")) change(()=>{ it.t=""; it.c=false; it.q=1; });
+    if(confirm("Plus de « "+it.t.trim()+" » : vider l’emplacement "+(i+1)+" ?")) change(()=>removeSlot(i));
   });
   I.addEventListener("input",e=>{const t=e.target; if(t.dataset.it!==undefined){ S.inv[t.dataset.it].t=t.value; render(); save(); }});
   // --- cases cochées ---
