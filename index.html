@@ -92,6 +92,20 @@ button{font:inherit;cursor:pointer;color:var(--ink)}
 .weapons .b{text-align:center}
 
 /* Mode de jeu */
+#parRow[hidden],#parOther[hidden],#parChoix[hidden],#parCalc[hidden]{display:none!important}
+body[data-livre="harpe"] [data-only="nuada"],body[data-livre="nuada"] [data-only="harpe"]{display:none!important}
+.choix{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;margin:10px 0 4px}
+.choix button{display:flex;flex-direction:column;align-items:center;gap:2px;padding:12px 8px;border:2px solid var(--moss);border-radius:10px;background:var(--field);color:var(--ink);font:inherit;line-height:1.2}
+.choix button b{font-size:1.25rem}
+.choix button span{font-size:.8rem;color:var(--muted);font-weight:700}
+.choix button.restart{border-color:var(--blood)}
+.saves{list-style:none;margin:8px 0;padding:0;display:grid;gap:6px}
+.saves li{border:1.5px solid var(--soft);border-radius:8px;padding:8px 10px;background:var(--field)}
+.saves li.vide{color:var(--muted)}
+.savebar{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.savebar button{padding:10px;border-radius:8px;border:2px solid var(--moss);background:var(--field);font:inherit;font-weight:700;color:var(--ink)}
+.savebar button:disabled{opacity:.45}
+.bookseg{grid-template-columns:1fr 1fr!important;margin:4px 0 12px}
 .seg{display:grid;grid-template-columns:repeat(3,1fr);border:2px solid var(--line);border-radius:8px;overflow:hidden}
 .seg button{border:0;background:var(--field);padding:10px 4px;font-weight:700;border-right:1.5px solid var(--soft)}
 .seg button:last-child{border-right:0}
@@ -256,6 +270,10 @@ main{padding-bottom:110px}
     <section aria-labelledby="h-set">
       <h2 id="h-set">Réglages de la partie</h2>
       <p class="small">À remplir en début de partie. Tu n’as normalement plus besoin d’y revenir.</p>
+      <p class="small">Livre</p>
+      <div class="seg bookseg" id="bookSeg" role="group" aria-label="Livre"><button data-b="harpe">Tome 1 : La Harpe des Quatre Saisons</button><button data-b="nuada">Tome 2 : La Confrérie de Nuada</button></div>
+      <button class="link" id="rollBtn" data-only="harpe">Tirer mes caractéristiques de départ (PV max : 2 dés × 4, Chance : 1 dé)</button>
+      <button class="link" id="initBtn" data-only="harpe">Mémoriser les caractéristiques actuelles comme valeurs de départ</button>
       <label class="small" for="name">Nom du personnage</label>
       <input class="name" id="name" placeholder="Nom de votre personnage" autocomplete="off">
     </section>
@@ -266,23 +284,33 @@ main{padding-bottom:110px}
     <h2 id="h-par">Parcours</h2>
     <div class="now"><span class="small">Paragraphe actuel</span><span class="big" id="parNow">–</span>
       <button class="tickbtn" id="parTick" hidden><span class="box"></span><span id="parTickTxt">Cocher la case</span></button></div>
-    <div class="addrow">
+    <div class="choix" id="parChoix" hidden></div>
+    <p class="small" id="parCalc" hidden>Le livre vous demande de trouver vous-même le numéro : saisissez-le ci-dessous.</p>
+    <button class="link" id="parOther" hidden>Autre numéro…</button>
+    <div class="addrow" id="parRow">
       <input id="parIn" type="number" inputmode="numeric" min="1" placeholder="Numéro du paragraphe" aria-label="Numéro du paragraphe">
       <button id="parAdd">Ajouter</button>
     </div>
     <div class="trail" id="trail" aria-label="Paragraphes déjà lus, dans l’ordre"></div>
     <div class="trailbar"><span class="small" id="parCount"></span><button class="link" id="parUndo">Retirer le dernier</button></div>
     <p class="notice" id="parNotice" hidden></p>
-    <p class="hint">Touchez un numéro pour le corriger ou le supprimer. Les numéros soulignés en or ont leur case cochée.</p>
+    <p class="hint">Touchez un numéro pour le corriger ou le supprimer.<span data-only="nuada"> Les numéros soulignés en or ont leur case cochée.</span></p>
   </section>
 
-  <section aria-labelledby="h-ck">
+  <section aria-labelledby="h-sav" data-only="harpe">
+    <h2 id="h-sav">Sauvegardes <span class="count" id="savCount"></span></h2>
+    <p class="small">En mode simplifié, le livre autorise trois sauvegardes. Il faut toujours reprendre la plus récente.</p>
+    <ol class="saves" id="saves"></ol>
+    <div class="savebar"><button id="savDo">Sauvegarder ici</button><button id="savLoad">Reprendre la dernière</button></div>
+  </section>
+
+  <section aria-labelledby="h-ck" data-only="nuada">
     <h2 id="h-ck">Cases cochées <span class="count" id="ckCount"></span></h2>
     <div class="ticks" id="ticks"></div>
     <p class="hint">Paragraphes du livre qui ont une case. Touchez un numéro pour cocher ou décocher sa case.</p>
   </section>
 
-  <section aria-labelledby="h-sp">
+  <section aria-labelledby="h-sp" data-only="nuada">
     <h2 id="h-sp">Pages spéciales</h2>
     <div id="special"></div>
   </section>
@@ -346,7 +374,7 @@ main{padding-bottom:110px}
     <h2 id="h-car">Caractéristiques</h2>
     <div class="stats">
       <div class="stat" data-k="dex"><div class="lbl">Dextérité</div><input type="number" inputmode="numeric" aria-label="Dextérité"><div class="pm"><button data-s="-1" aria-label="Dextérité moins 1">−</button><button data-s="1" aria-label="Dextérité plus 1">+</button></div></div>
-      <div class="stat" data-k="con"><div class="lbl">Constitution</div><input type="number" inputmode="numeric" aria-label="Constitution"><div class="pm"><button data-s="-1" aria-label="Constitution moins 1">−</button><button data-s="1" aria-label="Constitution plus 1">+</button></div><button class="tomax" id="conMax">Max (10)</button></div>
+      <div class="stat" data-k="con" data-only="nuada"><div class="lbl">Constitution</div><input type="number" inputmode="numeric" aria-label="Constitution"><div class="pm"><button data-s="-1" aria-label="Constitution moins 1">−</button><button data-s="1" aria-label="Constitution plus 1">+</button></div><button class="tomax" id="conMax">Max (10)</button></div>
       <div class="stat" data-k="chance"><div class="lbl">Chance</div><input type="number" inputmode="numeric" aria-label="Chance"><div class="pm"><button data-s="-1" aria-label="Chance moins 1">−</button><button data-s="1" aria-label="Chance plus 1">+</button></div></div>
     </div>
   </section>
@@ -373,13 +401,13 @@ main{padding-bottom:110px}
     </div>
   </section>
 
-  <section aria-labelledby="h-rep">
+  <section aria-labelledby="h-rep" data-only="nuada">
     <h2 id="h-rep">Réputation</h2>
     <div class="rep" id="rep" role="group" aria-labelledby="h-rep"></div>
     <div class="rep-ends small"><span>Mauvaise</span><span>Bonne</span></div>
   </section>
 
-  <section aria-labelledby="h-jours">
+  <section aria-labelledby="h-jours" data-only="nuada">
     <h2 id="h-jours">Jours écoulés</h2>
     <div class="days" id="days" role="group" aria-labelledby="h-jours"></div>
     <label class="small" for="wake">Prochain réveil</label>
@@ -429,12 +457,31 @@ main{padding-bottom:110px}
   back.onclick=()=>{ show(false); window.dispatchEvent(new Event("resize")); };
 })();
 (function(){
-  const KEY = "nuada-fiche-v1";
+  const LIVRES={
+    harpe:{titre:"La Harpe des Quatre Saisons",key:"harpe-fiche-v1",inv:24},
+    nuada:{titre:"La Confrérie de Nuada",key:"nuada-fiche-v1",inv:14}
+  };
+  let LIVRE=null; try{ LIVRE=localStorage.getItem("ariane-livre"); }catch(e){}
+  if(!LIVRES[LIVRE]){ let has=false; try{ has=!!localStorage.getItem("nuada-fiche-v1"); }catch(e){} LIVRE=has?"nuada":"harpe"; }
+  document.body.dataset.livre=LIVRE;
+  document.querySelector("header h1").textContent=LIVRES[LIVRE].titre;
+  document.title=LIVRES[LIVRE].titre+" – Feuille de personnage";
+  const INV_N=LIVRES[LIVRE].inv;
+  // Mécanique du tome 1 extraite du livre : renvois, énigmes à numéro calculé, combats. Aucun texte du livre.
+  const HARPE={"links":{"1":[[61],[41],[312],[164]],"2":[[17],[287]],"3":[[98]],"4":[[155],[45],[338]],"5":[[217],[264],[200]],"6":[[57]],"7":[[226],[4]],"8":[[170],[1]],"9":[[284],[199]],"10":[[152],[9]],"11":[[147],[323]],"12":[[258]],"13":[[271]],"14":[[256],[275]],"15":[[39]],"16":[[19]],"17":[[26],[184]],"18":[[268]],"19":[[280]],"20":[[29],[305],[159]],"21":[[1]],"22":[[59,"Dé : 3 ou moins"],[122,"Dé : 4 ou plus"]],"23":[[38]],"24":[[163]],"25":[[104]],"26":[[263]],"27":[[144]],"28":[[235],[48],[79]],"29":[[154]],"30":[[225],[313]],"31":[[128],[105]],"32":[[97],[94]],"33":[[47],[233]],"34":[[310]],"35":[[196]],"36":[[35],[129],[18]],"37":[[308]],"38":[[109]],"39":[[8]],"40":[[302],[267]],"41":[[61]],"42":[[1]],"43":[[56]],"44":[[115]],"45":[[102]],"46":[[169],[267]],"47":[[223],[33]],"48":[[36]],"49":[[274],[259]],"50":[[144]],"51":[[135]],"52":[[236],[211]],"53":[[306]],"54":[[232]],"55":[[207],[153]],"56":[[245],[166]],"57":[[43]],"58":[[84]],"59":[[17],[287]],"60":[[247],[141]],"61":[[309],[55],[162,"Talent : Instinct"]],"62":[[128]],"63":[[2],[69]],"64":[[294,"Talent : Persuasion"],[156],[317]],"65":[[306]],"66":[[49]],"67":[[104]],"68":[[222],[161],[188]],"69":[[1]],"70":[[13],[260]],"71":[[332]],"72":[[231],[78]],"73":[[279],[217],[200],[264]],"74":[[124]],"75":[[217],[279],[200]],"76":[[23]],"77":[[228],[173]],"78":[[255]],"79":[[90]],"80":[[320],[323]],"81":[[207]],"82":[[76]],"83":[[213]],"84":[[57]],"85":[[57]],"86":[[193],[32]],"87":[[165]],"88":[[49]],"89":[[169],[267]],"90":[[103],[219],[176]],"91":[[85]],"92":[[147],[323],[11]],"93":[[335],[323]],"94":[[65],[140]],"95":[[219],[176],[103]],"96":[[1]],"97":[[65],[140]],"98":[[214],[42]],"99":[[61]],"100":[[37],[253],[111]],"101":[[60]],"102":[[52],[349]],"103":[[121],[73]],"104":[[121]],"105":[[243],[21]],"106":[[132]],"107":[[336],[286],[171]],"108":[[321]],"109":[[100]],"110":[[343],[335]],"111":[[1]],"112":[[306]],"113":[[83]],"114":[[326],[4],[300]],"115":[[62]],"116":[[239],[1]],"117":[[131],[69]],"118":[[121],[73]],"119":[[223],[33]],"120":[[152],[9]],"121":[[118],[179]],"122":[[17],[287]],"123":[[127]],"124":[[288]],"125":[[261]],"126":[[14],[16]],"127":[[291],[185]],"128":[[119],[31],[233]],"129":[[194]],"130":[[281],[206]],"131":[[250],[22]],"132":[[108],[182]],"133":[[160]],"134":[[217],[279],[264]],"135":[[57]],"136":[[51],[91]],"137":[[92]],"138":[[324]],"139":[[103],[176],[219]],"140":[[306]],"141":[[311]],"142":[[261]],"143":[[221],[238],[171]],"144":[[117,"Dé : 1 ou 2"],[296,"Dé : 3 ou 4"],[63,"Dé : 5 ou 6"]],"145":[[57]],"146":[[98]],"147":[[333],[92]],"148":[[204]],"149":[[1]],"150":[[148],[42]],"151":[[189]],"152":[[149],[9]],"153":[[81],[290]],"154":[[123]],"155":[[98],[150],[266]],"156":[[317]],"157":[[328],[186],[12]],"158":[[77],[173]],"159":[[123]],"160":[[177]],"161":[[201],[68]],"162":[[195]],"163":[[192]],"164":[[202],[293],[99]],"165":[[62]],"166":[[248],[190]],"167":[[57]],"168":[[17],[287]],"169":[[7,"Talent : Observation"],[226],[4]],"170":[[49]],"171":[[234]],"172":[[201],[303]],"173":[[339]],"174":[[218],[226],[4]],"175":[[53],[112]],"176":[[28]],"177":[[344],[114],[347]],"178":[[70]],"179":[[121],[95]],"180":[[306]],"181":[[151]],"182":[[101]],"183":[[307],[265]],"184":[[299]],"185":[[283]],"186":[[251]],"187":[[144]],"188":[[68],[303]],"189":[[64],[327]],"190":[[272]],"191":[[348]],"192":[[208]],"193":[[149],[32]],"194":[[231],[292],[78]],"195":[[207],[153]],"196":[[235],[79],[48]],"197":[[12],[186]],"198":[[282]],"199":[[175],[180]],"200":[[330],[134]],"201":[[188],[161],[172]],"202":[[123]],"203":[[297]],"204":[[254],[334]],"205":[[174],[267]],"206":[[113],[30]],"207":[[20]],"208":[[318]],"209":[[139]],"210":[[254],[334]],"211":[[14],[16]],"212":[[93],[335],[323]],"213":[[183]],"214":[[204]],"215":[[133,"Talent : Herbologie"],[269],[241]],"216":[[350]],"217":[[121],[95]],"218":[[46,"Talent : Discrétion"],[89]],"219":[[139]],"220":[[345],[58]],"221":[[143],[238],[171]],"222":[[67],[25]],"223":[[243],[21]],"224":[[336],[107],[286],[234]],"225":[[106]],"226":[[102]],"227":[[1]],"228":[[240]],"229":[[278]],"230":[[232]],"231":[[157]],"232":[[346]],"233":[[128],[33]],"234":[[224],[80],[323]],"235":[[301]],"236":[[1]],"237":[[76]],"238":[[336],[107],[171]],"239":[[17],[287]],"240":[[229]],"241":[[160]],"242":[[277]],"243":[[188],[161]],"244":[[295,"Talent : Observation"],[237,"Talent : Instinct"],[82]],"245":[[248],[190]],"246":[[167]],"247":[[246]],"248":[[216]],"249":[[151]],"250":[[22]],"251":[[78],[292]],"252":[[195]],"253":[[1]],"254":[[315],[325]],"255":[[129],[35],[18]],"256":[[14]],"257":[[158]],"258":[[328],[186]],"259":[[242]],"260":[[138],[331]],"261":[[270]],"262":[[195]],"263":[[299]],"264":[[75]],"265":[[316]],"266":[[146],[3]],"267":[[1]],"268":[[35],[129]],"269":[[160]],"270":[[137]],"271":[[178],[260]],"272":[[350]],"273":[[71],[257]],"274":[[230,"Dé : 3 ou moins"],[54,"Dé : 4 ou plus"]],"275":[[14],[16]],"276":[[110],[343],[335]],"277":[[125],[142]],"278":[[88]],"279":[[5]],"280":[[62]],"281":[[206]],"282":[[57]],"283":[[120,"Talent : Empratique"],[86,"Talent : Observation"],[10]],"284":[[180],[175]],"285":[[66],[1]],"286":[[336],[107],[171]],"287":[[87]],"288":[[203]],"289":[[24],[15]],"290":[[123]],"291":[[283]],"292":[[329]],"293":[[61]],"294":[[27]],"295":[[76]],"296":[[116],[1]],"297":[[244]],"298":[[57]],"299":[[287],[17]],"300":[[205,"Talent : Doigts agiles"],[40],[304]],"301":[[48],[79],[235]],"302":[[169],[226],[4]],"303":[[188],[172]],"304":[[302],[267]],"305":[[164]],"306":[[215]],"307":[[265]],"308":[[130]],"309":[[252,"Dé : 1 à 3"],[262,"Dé : 4 à 6"]],"310":[[341]],"311":[[6]],"312":[[61]],"313":[[191]],"314":[[335],[323]],"315":[[325]],"316":[[220],[136]],"317":[[50],[227]],"318":[[49]],"319":[[181,"Talent : Discrétion"],[249],[189]],"320":[[337]],"321":[[60]],"322":[[72]],"323":[[234],[212],[92]],"324":[[145]],"325":[[254],[334]],"326":[[218]],"327":[[187],[96]],"328":[[197]],"329":[[322],[340]],"330":[[273]],"331":[[198]],"332":[[289],[15]],"333":[[92]],"334":[[44]],"335":[[342],[276],[212]],"336":[[107],[286],[171]],"337":[[221],[143],[238],[171]],"338":[[144],[45],[155]],"339":[[285]],"340":[[72]],"341":[[74]],"342":[[276],[212]],"343":[[110],[335]],"344":[[4]],"345":[[298]],"346":[[261]],"347":[[189],[4],[319]],"348":[[178],[13]],"349":[[14],[16]],"350":[]},"calc":[93,219,256,263,315],"combats":{"2":[{"nom":"Groupe De Sept Gobelins","dex":10,"pv":50,"win":17,"lose":287,"oblig":1}],"8":[{"nom":"Nuée De Chauves-Souris","dex":5,"pv":20,"win":170,"seuil":"moitie","restart":1}],"40":[{"nom":"Trois Gobelins","dex":7,"pv":25,"win":302,"lose":267}],"46":[{"nom":"Gobelin Seul","dex":5,"pv":15,"win":169,"lose":267}],"59":[{"nom":"Groupe De Sept Gobelins","dex":10,"pv":50,"win":17,"lose":287,"oblig":1}],"63":[{"nom":"Deux Gobelins","dex":7,"pv":20,"win":2,"lose":69}],"89":[{"nom":"Deux Gobelins","dex":7,"pv":20,"win":169,"lose":267}],"98":[{"nom":"Deux Gobelins","dex":7,"pv":20,"win":214,"lose":42}],"105":[{"nom":"Deux Gobelins","dex":7,"pv":20,"win":243,"lose":21}],"116":[{"nom":"Gobelin Seul","dex":5,"pv":15,"win":239,"restart":1}],"117":[{"nom":"Deux Gobelins","dex":7,"pv":20,"win":131,"lose":69}],"122":[{"nom":"Groupe De Sept Gobelins","dex":10,"pv":50,"win":17,"lose":287,"oblig":1}],"126":[{"nom":"Groupe De Sept Gobelins","dex":10,"pv":50,"win":14,"lose":16,"oblig":1}],"150":[{"nom":"Deux Gobelins","dex":7,"pv":20,"win":148,"lose":42}],"168":[{"nom":"Groupe De Sept Gobelins","dex":10,"pv":50,"win":17,"lose":287,"oblig":1}],"204":[{"nom":"Groupe De Sept Gobelins","dex":19,"pv":50,"win":254,"lose":334,"oblig":1}],"205":[{"nom":"Gobelin Seul","dex":5,"pv":15,"win":174,"lose":267}],"210":[{"nom":"Groupe De Sept Gobelins","dex":10,"pv":50,"win":254,"lose":334,"oblig":1}],"211":[{"nom":"Groupe De Sept Gobelins","dex":10,"pv":50,"win":14,"lose":16,"oblig":1}],"223":[{"nom":"Deux Gobelins","dex":7,"pv":20,"win":243,"lose":21}],"239":[{"nom":"Groupe De Sept Gobelins","dex":10,"pv":50,"win":17,"lose":287,"oblig":1}],"275":[{"nom":"Groupe De Sept Gobelins","dex":10,"pv":50,"win":14,"lose":16,"oblig":1}],"285":[{"nom":"Nuée De Chauves-Souris","dex":5,"pv":20,"win":66,"seuil":"moitie","restart":1}],"296":[{"nom":"Gobelin Seul","dex":5,"pv":15,"win":116,"restart":1}],"299":[{"nom":"Groupe De Sept Gobelins","dex":10,"pv":50,"win":17,"lose":287,"oblig":1}],"304":[{"nom":"Trois Gobelins","dex":3,"pv":25,"win":302,"lose":267}],"317":[{"nom":"Petit Homme Douanier","dex":9,"pv":10,"win":50,"lose":227,"seuil":5}],"325":[{"nom":"Groupe De Sept Gobelins","dex":10,"pv":50,"win":254,"lose":334,"oblig":1}],"327":[{"nom":"Deux Gobelins","dex":7,"pv":20,"win":187,"lose":96}],"349":[{"nom":"Groupe De Sept Gobelins","dex":10,"pv":50,"win":14,"lose":16,"oblig":1}]}};
+  const LINKS=LIVRE==="harpe"?HARPE.links:{};
+  const CALC=LIVRE==="harpe"?HARPE.calc:[];
+  const ENNEMIS_HARPE={};
+  Object.entries(HARPE.combats).forEach(([p,list])=>{ ENNEMIS_HARPE[p]=list.map(e=>{
+    const o={nom:e.nom,dex:e.dex,pv:e.pv,bonus:0,win:e.win?{to:e.win}:null,lose:e.restart?{restart:true}:(e.lose?{to:e.lose}:null)};
+    if(e.seuil) o.seuil=e.seuil; if(e.oblig) o.oblig=true; else o.narratif=0; return o; }); });
+  const KEY = LIVRES[LIVRE].key;
   const blank = () => ({
     name:"", pvMax:0, pv:0, dex:0, con:0, chance:0, dmg:"", talents:"",
     weapons:Array.from({length:5},()=>({n:"",b:""})),
     mode:"", rep:0, days:[false,false,false,false], wake:"",
-    inv:Array.from({length:14},()=>({c:false,t:"",q:1})), parcours:[], coches:[], special:{}, combat:null, updated:0
+    inv:Array.from({length:INV_N},()=>({c:false,t:"",q:1})), parcours:[], coches:[], special:{}, combat:null, updated:0,
+    saves:[], init:LIVRE==="harpe"?{dex:7}:null
   });
   let S = blank();
   let timer = null;
@@ -450,6 +497,7 @@ main{padding-bottom:110px}
     r.combat = (o&&o.combat&&typeof o.combat==="object")?JSON.parse(JSON.stringify(o.combat)):null;
     r.special = (o&&o.special&&typeof o.special==="object")?JSON.parse(JSON.stringify(o.special)):{};
     r.parcours = (o&&Array.isArray(o.parcours)?o.parcours:[]).map(n=>parseInt(n,10)).filter(n=>n>0);
+    r.saves = (o&&Array.isArray(o.saves)?o.saves:[]).slice(0,3);
     return r;
   }
 
@@ -465,7 +513,7 @@ main{padding-bottom:110px}
   const D = $("days");
   for(let i=0;i<4;i++){ const bt=document.createElement("button"); bt.dataset.i=i; bt.textContent=i+1; bt.setAttribute("aria-label","Jour "+(i+1)); D.append(bt); }
   const I = $("inv");
-  for(let i=0;i<14;i++){
+  for(let i=0;i<INV_N;i++){
     const row=document.createElement("div"); row.className="slot";
     const t=document.createElement("textarea"); t.className="it"; t.rows=1; t.dataset.it=i; t.autocomplete="off"; t.placeholder="Emplacement "+(i+1); t.setAttribute("aria-label","Emplacement "+(i+1));
     const c=document.createElement("button"); c.className="trash"; c.dataset.ti=i; c.setAttribute("aria-label","Vider l’emplacement "+(i+1));
@@ -476,7 +524,7 @@ main{padding-bottom:110px}
   }
 
   // --- pages spéciales du livre ---
-  const PAGES = {
+  const PAGES = LIVRE!=="nuada"?{}:{
     319: { titre:"Tableau des quêtes", items:[
       {t:"Une balade en forêt", c:"environ 4 points de Constitution", to:4},
       {t:"Engagez-vous !", c:"6 points de Constitution obligatoires", to:318},
@@ -526,6 +574,7 @@ main{padding-bottom:110px}
 
   // --- rendu ---
   function render(){
+    renderChoix(); renderSaves(); renderBook();
     if(S.con>CON_MAX) S.con=CON_MAX;
     $("conMax").disabled=S.con>=CON_MAX;
     document.querySelector('.stat[data-k="con"] [data-s="1"]').disabled=S.con>=CON_MAX;
@@ -555,7 +604,7 @@ main{padding-bottom:110px}
       q.classList.toggle("off",!u); q.querySelector("span").textContent=S.inv[i].q;
       q.querySelectorAll("button").forEach(x=>x.disabled=!u); row.classList.toggle("used",u); if(u) used++;
     });
-    $("invCount").textContent=used+" / 14";
+    $("invCount").textContent=used+" / "+INV_N;
     const P=S.parcours;
     $("parNow").textContent=P.length?P[P.length-1]:"–";
     const T=$("trail"); T.textContent="";
@@ -645,7 +694,7 @@ main{padding-bottom:110px}
   I.addEventListener("keydown",e=>{ if(e.key==="Enter"&&e.target.dataset.it!==undefined){ e.preventDefault(); e.target.blur(); } });
   window.addEventListener("resize",()=>I.querySelectorAll("textarea.it").forEach(fitIt));
   // --- cases cochées ---
-  const COCHABLES=[3,6,8,28,34,60,78,89,96,102,108,115,124,147,160,163,180,193,201,227,234,241,248,256,273,285,286,289,295,298,303];
+  const COCHABLES=LIVRE!=="nuada"?[]:[3,6,8,28,34,60,78,89,96,102,108,115,124,147,160,163,180,193,201,227,234,241,248,256,273,285,286,289,295,298,303];
   const curPar=()=>S.parcours.length?S.parcours[S.parcours.length-1]:null;
   function renderTicks(){
     const cur=curPar(), on=cur!==null&&S.coches.includes(cur);
@@ -709,7 +758,7 @@ main{padding-bottom:110px}
   const GARDES_DES={ nom:"Deux gardes jouant aux dés", dex:9, pv:25, bonus:0 };
   const BANDIT_CAMP={ nom:"Bandit du camp", dex:7, pv:20, bonus:0 };
   const GOBELINS_CAMP={ nom:"Gobelins du camp", dex:7, pv:20, bonus:0, mods:[TUEUR_GOBELINS] };
-  const ENNEMIS = {
+  const ENNEMIS = LIVRE!=="nuada"?ENNEMIS_HARPE:{
     3:   [GOBELIN_FORET],
     115: [GOBELIN_FORET],
     129: [GOBELINS_CAMP],
@@ -757,7 +806,7 @@ main{padding-bottom:110px}
       const cur=S.parcours.length?S.parcours[S.parcours.length-1]:null, list=ENNEMIS[cur]||[], K=$("cbKnown");
       K.hidden=!list.length; K.innerHTML=list.length?'<p class="small">Ennemi du paragraphe '+cur+' :</p>':'';
       list.forEach((en,i)=>{ const b=document.createElement("button"); b.dataset.ei=i;
-        b.innerHTML='<b>Combattre : '+esc(en.nom)+'</b><span>Dextérité '+en.dex+', '+en.pv+' points de vie'+(en.bonus?', dommages '+sgn(en.bonus):'')+'</span>'; K.append(b);
+        b.innerHTML='<b>Combattre : '+esc(en.nom)+'</b><span>Dextérité '+en.dex+', '+en.pv+' points de vie'+(en.bonus?', dommages '+sgn(en.bonus):'')+(en.seuil?', victoire dès '+(en.seuil==="moitie"?Math.floor(en.pv/2):en.seuil)+' PV restants':'')+(en.oblig?'. Combat obligatoire, même en mode narratif':'')+'</span>'; K.append(b);
         if(en.narratif!==undefined){ const n=document.createElement("button"); n.dataset.ni=i;
           n.innerHTML='<b>Mode narratif : victoire automatique</b><span>'+(en.narratif?'Vous perdez '+en.narratif+' points de vie':'Sans perte de points de vie')+(S.mode==="Narratif"?'':' (seulement si vous jouez en mode narratif)')+'</span>'; K.append(n); } });
       return;
@@ -796,12 +845,14 @@ main{padding-bottom:110px}
     if(iss.con) parts.push((iss.con<0?"retirer ":"ajouter ")+Math.abs(iss.con)+" point"+(Math.abs(iss.con)>1?"s":"")+" de Constitution"+(iss.deficitPv?" (ou "+iss.deficitPv+" PV par point manquant)":""));
     if(iss.pv) parts.push((iss.pv<0?"retirer ":"ajouter ")+Math.abs(iss.pv)+" point"+(Math.abs(iss.pv)>1?"s":"")+" de vie");
     if(iss.to) parts.push((iss.deficitPv?"si vous êtes toujours en vie, ":"")+"aller au "+iss.to);
+    if(iss.restart) parts.push("recommencer l’aventure (dernière sauvegarde ou paragraphe 1)");
     const t=parts.join(" et ");
     return phrase?"Le livre indique : "+t:t.charAt(0).toUpperCase()+t.slice(1);
   }
   $("cbResult").addEventListener("click",e=>{
     if(!e.target.closest("#cbIssue")) return;
     const c=S.combat; if(!c||!c.fini) return; const iss=c[c.fini]; if(!iss) return;
+    if(iss.restart){ change(()=>{ S.combat=null; }); restartFlow(); return; }
     if(!confirm(issueText(iss,false)+" ?")) return;
     let dead=false, lost=0;
     change(()=>{
@@ -840,6 +891,7 @@ main{padding-bottom:110px}
     if(S.pv<=0){ alert("Votre personnage n’a plus de points de vie : mettez à jour vos PV avant de combattre."); return; }
     const cur=S.parcours[S.parcours.length-1], en=ENNEMIS[cur][+b.dataset.ei];
     startCombat(en.nom,en.dex,en.pv,en.bonus||0,en.mods,{win:en.win,lose:en.lose});
+    if(en.seuil) change(()=>{ S.combat.seuil=en.seuil==="moitie"?Math.floor(en.pv/2):en.seuil; });
   });
   $("cbMods").addEventListener("click",e=>{
     const b=e.target.closest(".mod"); const c=S.combat; if(!b||!c) return;
@@ -856,31 +908,108 @@ main{padding-bottom:110px}
         if(e.rhit){ e.rd=d6(); e.rb=c.bonus; e.rtot=Math.max(0,1+e.rd+e.rb); S.pv=Math.max(0,S.pv-e.rtot); }
       }
       c.log.unshift(e); c.tour++;
-      if(c.pv<=0) c.fini="win"; else if(S.pv<=0) c.fini="lose";
+      if(c.pv<=(c.seuil||0)) c.fini="win"; else if(S.pv<=0) c.fini="lose";
     });
     if(navigator.vibrate) navigator.vibrate(S.combat.fini?[40,60,40]:30);
   };
-  $("cbFoeMinus").onclick=()=>{ const c=S.combat; if(c&&!c.fini) change(()=>{ c.pv=Math.max(0,c.pv-1); if(c.pv<=0) c.fini="win"; }); };
+  $("cbFoeMinus").onclick=()=>{ const c=S.combat; if(c&&!c.fini) change(()=>{ c.pv=Math.max(0,c.pv-1); if(c.pv<=(c.seuil||0)) c.fini="win"; }); };
   $("cbFoePlus").onclick=()=>{ const c=S.combat; if(c) change(()=>{ c.pv=Math.min(c.pvMax,c.pv+1); if(c.fini==="win"&&c.pv>0) c.fini=null; }); };
   $("cbEnd").onclick=()=>{
     const c=S.combat; if(!c) return;
     if(c.fini||confirm("Abandonner le combat en cours ?")) change(()=>S.combat=null);
   };
 
-  $("reset").onclick=()=>{ if(confirm("Effacer toute la fiche et commencer une nouvelle partie ?")) change(()=>{ S=blank(); }); };
+  $("reset").onclick=()=>{ if(confirm("Effacer toute la fiche et commencer une nouvelle partie ?")) change(()=>{ S=normalize(LIVRE==="harpe"?{parcours:[1],dex:7}:{}); }); };
 
   // --- chargement ---
+  // --- choix proposés par le livre ---
+  let autreNum=false, dernierPar=null;
+  function renderChoix(){
+    const cur=S.parcours.length?S.parcours[S.parcours.length-1]:null;
+    if(cur!==dernierPar){ autreNum=false; dernierPar=cur; }
+    const L=(cur&&LINKS[cur])||[], calc=!!cur&&CALC.includes(cur), C=$("parChoix");
+    C.innerHTML="";
+    L.forEach(([to,cond])=>{ const b=document.createElement("button"); b.dataset.to=to;
+      if(to===1&&cur!==1){ b.className="restart"; b.innerHTML='<b>Recommencer</b><span>dernière sauvegarde ou paragraphe 1</span>'; }
+      else b.innerHTML='<span>Aller au</span><b>'+to+'</b>'+(cond?'<span>'+esc(cond)+'</span>':'');
+      C.append(b); });
+    C.hidden=!L.length;
+    $("parCalc").hidden=!calc;
+    const manuel=LIVRE!=="harpe"||!L.length||calc||autreNum;
+    $("parRow").hidden=!manuel;
+    $("parOther").hidden=manuel;
+  }
+  $("parChoix").addEventListener("click",e=>{
+    const b=e.target.closest("button[data-to]"); if(!b) return;
+    const to=+b.dataset.to, cur=S.parcours[S.parcours.length-1];
+    if(to===1&&cur!==1){ restartFlow(); return; }
+    change(()=>S.parcours.push(to)); showNotice(to);
+    if(navigator.vibrate) navigator.vibrate(10);
+    $("h-par").scrollIntoView({behavior:"smooth"});
+  });
+  $("parOther").onclick=()=>{ autreNum=true; renderChoix(); $("parIn").focus(); };
+
+  // --- recommencer l’aventure ---
+  function restartFlow(){
+    const last=S.saves&&S.saves.length?S.saves[S.saves.length-1]:null;
+    if(last&&confirm("Reprendre à votre dernière sauvegarde (paragraphe "+last.par+") ?")) return restoreSave(true);
+    if(!confirm("Recommencer depuis le début : vider l’inventaire et les armes, remettre vos caractéristiques de départ et retourner au paragraphe 1 ?")) return;
+    change(()=>{ const i=S.init||{}; if(i.pvMax) S.pvMax=i.pvMax; S.pv=S.pvMax; if(i.dex!=null) S.dex=i.dex; if(i.chance!=null) S.chance=i.chance;
+      const b=blank(); S.inv=b.inv; S.weapons=b.weapons; S.dmg=""; S.combat=null; S.parcours.push(1); });
+    showNotice(1);
+  }
+
+  // --- sauvegardes du mode simplifié (tome 1) ---
+  const copie=o=>JSON.parse(JSON.stringify(o));
+  function renderSaves(){
+    const L=$("saves"); if(!L) return; L.innerHTML="";
+    for(let i=0;i<3;i++){ const sv=S.saves[i], li=document.createElement("li");
+      if(sv){ const d=new Date(sv.t); li.textContent="Sauvegarde "+(i+1)+" : paragraphe "+sv.par+" ("+sv.pv+" PV, le "+d.toLocaleDateString("fr-FR")+")"; }
+      else { li.className="vide"; li.textContent="Sauvegarde "+(i+1)+" : libre"; }
+      L.append(li); }
+    $("savCount").textContent=S.saves.length+" / 3";
+    $("savDo").disabled=S.saves.length>=3||!S.parcours.length;
+    $("savLoad").disabled=!S.saves.length;
+  }
+  $("savDo").onclick=()=>{
+    const cur=S.parcours[S.parcours.length-1]; if(!cur||S.saves.length>=3) return;
+    if(!confirm("Utiliser la sauvegarde "+(S.saves.length+1)+" sur 3 au paragraphe "+cur+" ?")) return;
+    change(()=>S.saves.push({par:cur,t:Date.now(),pv:S.pv,pvMax:S.pvMax,dex:S.dex,chance:S.chance,talents:S.talents,dmg:S.dmg,inv:copie(S.inv),weapons:copie(S.weapons)}));
+  };
+  function restoreSave(dejaConfirme){
+    const sv=S.saves[S.saves.length-1]; if(!sv) return;
+    if(!dejaConfirme&&!confirm("Reprendre la sauvegarde la plus récente (paragraphe "+sv.par+") ? Vos caractéristiques et votre inventaire reviendront à cet instant.")) return;
+    change(()=>{ ["pv","pvMax","dex","chance","talents","dmg"].forEach(k=>S[k]=sv[k]); S.inv=copie(sv.inv); S.weapons=copie(sv.weapons); S.combat=null; S.parcours.push(sv.par); });
+    showNotice(sv.par);
+  }
+  $("savLoad").onclick=()=>restoreSave(false);
+  $("rollBtn").onclick=()=>{
+    if(S.pvMax&&!confirm("Remplacer vos PV max ("+S.pvMax+") et votre Chance ("+S.chance+") par un nouveau tirage ?")) return;
+    const d=()=>1+Math.floor(Math.random()*6), a=d(), b=d(), c=d();
+    change(()=>{ S.pvMax=(a+b)*4; S.pv=S.pvMax; S.chance=c; S.dex=7; S.init={pvMax:S.pvMax,dex:7,chance:c}; });
+    alert("Dés : "+a+" + "+b+" = "+(a+b)+", donc "+S.pvMax+" PV max.\nChance : "+c+".\nDextérité : 7, comme tous les Apprentis.");
+  };
+  $("initBtn").onclick=()=>{ if(confirm("Mémoriser PV max "+S.pvMax+", Dextérité "+S.dex+" et Chance "+S.chance+" comme valeurs de départ ?")) change(()=>S.init={pvMax:S.pvMax,dex:S.dex,chance:S.chance}); };
+
+  // --- changement de livre ---
+  function renderBook(){ $("bookSeg").querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.b===LIVRE)); }
+  $("bookSeg").addEventListener("click",e=>{
+    const b=e.target.closest("button[data-b]"); if(!b||b.dataset.b===LIVRE) return;
+    if(!confirm("Passer à « "+LIVRES[b.dataset.b].titre+" » ? Votre partie actuelle reste enregistrée et vous la retrouverez en revenant à ce livre.")) return;
+    save(); try{ localStorage.setItem("ariane-livre",b.dataset.b); }catch(e){} location.reload();
+  });
+
   const SEED=[1,281,170,131,191,135,120,162,79,16,52,261,251,149,337,288,133,157,167,87,178,339,20,219,136,61,315,83,35,179,239,324,24,176,194,259,296,301,98,238,31,348,69,269,19,143,67,305,137,306,139,101,144,140,185,50,262,26,299,49,176,30];
   let raw=null; try{ raw=localStorage.getItem(KEY); }catch(e){}
   if(raw){ try{ S=normalize(JSON.parse(raw)); }catch(e){} }
-  else { S=normalize({parcours:SEED}); try{ localStorage.setItem(KEY,JSON.stringify(S)); }catch(e){} }
+  else { S=normalize(LIVRE==="nuada"?{parcours:SEED}:{parcours:[1],dex:7}); try{ localStorage.setItem(KEY,JSON.stringify(S)); }catch(e){} }
   render(); status("Enregistré sur cet appareil");
 
   // --- sauvegarde / restauration ---
   $("exportBtn").onclick=()=>{
     const blob=new Blob([JSON.stringify(S,null,2)],{type:"application/json"});
     const a=document.createElement("a"); a.href=URL.createObjectURL(blob);
-    const d=new Date(); a.download="nuada-sauvegarde-"+d.toISOString().slice(0,10)+".json";
+    const d=new Date(); a.download=LIVRE+"-sauvegarde-"+d.toISOString().slice(0,10)+".json";
     document.body.append(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),2000);
     status("Sauvegarde téléchargée");
   };
